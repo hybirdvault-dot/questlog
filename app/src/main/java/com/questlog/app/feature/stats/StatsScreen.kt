@@ -87,7 +87,7 @@ fun StatsScreen(
 
                 uiState.errorMessage != null -> CenteredMessage(
                     title = "Something went wrong",
-                    subtitle = uiState.errorMessage,
+                    subtitle = uiState.errorMessage.orEmpty(),
                 )
 
                 uiState.totalGames == 0 -> CenteredMessage(

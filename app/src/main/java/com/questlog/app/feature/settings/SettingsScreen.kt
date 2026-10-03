@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,7 +40,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -55,11 +53,9 @@ import com.questlog.app.ui.designsystem.QuestlogViolet
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
-    onNavigateToPaywall: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -83,15 +79,6 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
         ) {
-            SettingsSection(title = "Account") {
-                SettingsItem(
-                    icon = Icons.Filled.Star,
-                    title = "Questlog Pro",
-                    subtitle = if (isPro) "Pro member" else "Unlock premium features",
-                    onClick = onNavigateToPaywall,
-                )
-            }
-
             SettingsSection(title = "Appearance") {
                 SettingsItem(
                     icon = Icons.Filled.Palette,

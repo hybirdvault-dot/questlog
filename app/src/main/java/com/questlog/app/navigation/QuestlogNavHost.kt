@@ -18,9 +18,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -34,7 +36,6 @@ import com.questlog.app.feature.capture.CaptureScreen
 import com.questlog.app.feature.discover.DiscoverScreen
 import com.questlog.app.feature.game.GameDetailScreen
 import com.questlog.app.feature.library.LibraryScreen
-import com.questlog.app.feature.paywall.PaywallScreen
 import com.questlog.app.feature.settings.SettingsScreen
 import com.questlog.app.feature.stats.StatsScreen
 
@@ -75,7 +76,7 @@ private val routesWithBottomNav = setOf(
 private const val ANIM_DURATION = 300
 
 @Composable
-fun QuestlogApp() {
+fun QuestlogApp(shareEventBus: ShareEventBus) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -111,6 +112,7 @@ fun QuestlogApp() {
     ) { innerPadding ->
         QuestlogNavHost(
             navController = navController,
+            shareEventBus = shareEventBus,
             modifier = Modifier.padding(innerPadding),
         )
     }
@@ -119,8 +121,21 @@ fun QuestlogApp() {
 @Composable
 fun QuestlogNavHost(
     navController: NavHostController,
+    shareEventBus: ShareEventBus,
     modifier: Modifier = Modifier,
 ) {
+    val pendingShare by shareEventBus.pending.collectAsStateWithLifecycle()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(pendingShare, currentRoute) {
+        if (pendingShare != null && currentRoute != QuestlogRoute.Capture.route) {
+            navController.navigate(QuestlogRoute.Capture.route) {
+                launchSingleTop = true
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = QuestlogRoute.Library.route,
@@ -182,13 +197,6 @@ fun QuestlogNavHost(
         composable(QuestlogRoute.Settings.route) {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                onNavigateToPaywall = { navController.navigate(QuestlogRoute.Paywall.route) },
-            )
-        }
-
-        composable(QuestlogRoute.Paywall.route) {
-            PaywallScreen(
-                onDismiss = { navController.popBackStack() },
             )
         }
     }

@@ -2,7 +2,6 @@
 
 package com.questlog.app.feature.capture
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,17 +65,15 @@ fun CaptureScreen(
     onBack: () -> Unit,
     onSearchManually: () -> Unit,
     onShare: (Game) -> Unit,
-    sharedText: String? = null,
-    sharedImageUri: Uri? = null,
     viewModel: CaptureViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pendingShare by viewModel.pendingShare.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        when {
-            sharedText != null -> viewModel.processSharedText(sharedText)
-            sharedImageUri != null -> viewModel.processSharedImage(sharedImageUri, context)
+    LaunchedEffect(pendingShare) {
+        if (pendingShare != null) {
+            viewModel.consumePendingShare(context)
         }
     }
 

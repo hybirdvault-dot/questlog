@@ -55,6 +55,7 @@ import com.questlog.app.ui.designsystem.QuestlogEmptyState
 import com.questlog.app.ui.designsystem.QuestlogGameImage
 import com.questlog.app.ui.designsystem.QuestlogGray
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
+import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogViolet
 import java.util.Locale

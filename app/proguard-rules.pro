@@ -29,9 +29,6 @@
 -keep class javax.inject.** { *; }
 -keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }
 
-# --- RevenueCat ---
--keep class com.revenuecat.purchases.** { *; }
-
 # --- OneSignal ---
 -keep class com.onesignal.** { *; }
 

@@ -14,5 +14,4 @@ sealed class QuestlogRoute(val route: String) {
 
     object Stats : QuestlogRoute("stats")
     object Settings : QuestlogRoute("settings")
-    object Paywall : QuestlogRoute("paywall")
 }

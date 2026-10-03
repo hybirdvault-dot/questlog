@@ -19,7 +19,6 @@ val localProperties = Properties().apply {
     }
 }
 val rawgApiKey: String = localProperties.getProperty("RAWG_API_KEY") ?: ""
-val revenueCatApiKey: String = localProperties.getProperty("REVENUECAT_API_KEY") ?: ""
 val oneSignalAppId: String = localProperties.getProperty("ONESIGNAL_APP_ID") ?: ""
 
 android {
@@ -37,7 +36,6 @@ android {
 
         // API keys — read from local.properties, never hardcoded.
         buildConfigField("String", "RAWG_API_KEY", "\"$rawgApiKey\"")
-        buildConfigField("String", "REVENUECAT_API_KEY", "\"$revenueCatApiKey\"")
         buildConfigField("String", "ONESIGNAL_APP_ID", "\"$oneSignalAppId\"")
     }
 
@@ -145,14 +143,8 @@ dependencies {
     // --- ML Kit on-device text recognition ---
     implementation(libs.mlkit.text.recognition)
 
-    // --- RevenueCat (in-app purchases / subscriptions) ---
-    implementation(libs.revenuecat.purchases)
-
     // --- OneSignal (push notifications) ---
     implementation(libs.onesignal)
-
-    // --- Lottie (animated vector UI) ---
-    implementation(libs.lottie.compose)
 
     // --- Tests ---
     testImplementation(libs.junit)

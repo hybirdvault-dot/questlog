@@ -10,6 +10,8 @@ import com.questlog.app.core.model.GamePreview
 import com.questlog.app.core.network.rawg.RawgRepository
 import com.questlog.app.core.ocr.OcrEngine
 import com.questlog.app.data.repository.GameRepository
+import com.questlog.app.navigation.PendingShare
+import com.questlog.app.navigation.ShareEventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +26,21 @@ class CaptureViewModel @Inject constructor(
     private val rawgRepository: RawgRepository,
     private val gameRepository: GameRepository,
     private val ocrEngine: OcrEngine,
+    private val shareEventBus: ShareEventBus,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CaptureUiState>(CaptureUiState.Idle)
     val uiState: StateFlow<CaptureUiState> = _uiState.asStateFlow()
+
+    val pendingShare: StateFlow<PendingShare?> = shareEventBus.pending
+
+    fun consumePendingShare(context: Context) {
+        when (val share = shareEventBus.consume()) {
+            is PendingShare.Text -> processSharedText(share.body)
+            is PendingShare.Image -> processSharedImage(share.uri, context)
+            null -> Unit
+        }
+    }
 
     fun processSharedText(text: String) {
         viewModelScope.launch {
