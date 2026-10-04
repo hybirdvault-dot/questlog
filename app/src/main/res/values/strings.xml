@@ -114,4 +114,21 @@
     <string name="stats_completed_of_total">%1$d of %2$d completed</string>
     <string name="stats_by_status">By Status</string>
     <string name="pro_badge">PRO</string>
+
+    <!-- Clock In (habit) -->
+    <string name="clockin_tier_none">Getting started</string>
+    <string name="clockin_tier_warm">Warming up</string>
+    <string name="clockin_tier_flamekeeper">Flamekeeper</string>
+    <string name="clockin_tier_inferno">Inferno</string>
+    <string name="clockin_tier_legend">Legend</string>
+    <string name="clockin_next_tier">Next: %1$s</string>
+    <string name="clockin_progress_title">Progress</string>
+    <string name="clockin_verified">%1$d verified</string>
+    <string name="clockin_view_all_stats">View all stats</string>
+    <string name="clockin_longest">Longest: %1$d</string>
+    <string name="clockin_total">Total: %1$d</string>
+    <plurals name="clockin_day_streak">
+        <item quantity="one">%1$d day streak</item>
+        <item quantity="other">%1$d days streak</item>
+    </plurals>
 </resources>

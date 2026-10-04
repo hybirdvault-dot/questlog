@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.LibraryBooks
-import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.LibraryBooks
-import androidx.compose.material.icons.outlined.PieChart
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -36,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.questlog.app.R
 import com.questlog.app.feature.capture.CaptureScreen
+import com.questlog.app.feature.clockin.ClockInScreen
 import com.questlog.app.feature.discover.DiscoverScreen
 import com.questlog.app.feature.game.GameDetailScreen
 import com.questlog.app.feature.library.LibraryScreen
@@ -63,17 +66,24 @@ private val bottomNavItems = listOf(
         unselectedIcon = Icons.Outlined.AutoAwesome,
     ),
     BottomNavItem(
-        route = QuestlogRoute.Stats.route,
-        labelRes = R.string.nav_stats,
-        selectedIcon = Icons.Filled.PieChart,
-        unselectedIcon = Icons.Outlined.PieChart,
+        route = QuestlogRoute.ClockIn.route,
+        labelRes = R.string.nav_clock_in,
+        selectedIcon = Icons.Filled.LocalFireDepartment,
+        unselectedIcon = Icons.Outlined.LocalFireDepartment,
+    ),
+    BottomNavItem(
+        route = QuestlogRoute.Settings.route,
+        labelRes = R.string.nav_settings,
+        selectedIcon = Icons.Filled.Settings,
+        unselectedIcon = Icons.Outlined.Settings,
     ),
 )
 
 private val routesWithBottomNav = setOf(
     QuestlogRoute.Library.route,
     QuestlogRoute.Discover.route,
-    QuestlogRoute.Stats.route,
+    QuestlogRoute.ClockIn.route,
+    QuestlogRoute.Settings.route,
 )
 
 private const val ANIM_DURATION = 300
@@ -164,6 +174,12 @@ fun QuestlogNavHost(
 
         composable(QuestlogRoute.Discover.route) {
             DiscoverScreen()
+        }
+
+        composable(QuestlogRoute.ClockIn.route) {
+            ClockInScreen(
+                onViewStats = { navController.navigate(QuestlogRoute.Stats.route) },
+            )
         }
 
         composable(QuestlogRoute.Capture.route) {

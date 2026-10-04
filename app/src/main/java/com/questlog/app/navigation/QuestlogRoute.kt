@@ -13,5 +13,6 @@ sealed class QuestlogRoute(val route: String) {
     }
 
     object Stats : QuestlogRoute("stats")
+    object ClockIn : QuestlogRoute("clock-in")
     object Settings : QuestlogRoute("settings")
 }
