@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.View
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalDensity
@@ -36,20 +39,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
-import coil3.compose.AsyncImage
+import coil3.BitmapImage
+import coil3.SingletonImageLoader
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
 import com.questlog.app.R
 import com.questlog.app.core.model.Game
 import com.questlog.app.ui.designsystem.QuestlogStatusChip
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ShareCardRenderer @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
 
-    fun renderGameCard(game: Game, verifiedBadge: Boolean = false): Bitmap {
+    suspend fun renderGameCard(game: Game, verifiedBadge: Boolean = false): Bitmap {
         val style = ShareCardStyle.GameCard
+        val coverImage = game.coverUrl?.let { loadCover(it) }
         val composeView = ComposeView(context).apply {
             setContent {
                 val density = LocalDensity.current
@@ -63,15 +72,25 @@ class ShareCardRenderer @Inject constructor(
                 ) {
                     Column(modifier = Modifier.fillMaxSize()) {
                         if (game.coverUrl != null) {
-                            AsyncImage(
-                                model = game.coverUrl,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(4f / 3f)
-                                    .clip(RoundedCornerShape(24.dp)),
-                                contentScale = ContentScale.Crop,
-                            )
+                            if (coverImage != null) {
+                                Image(
+                                    bitmap = coverImage,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(4f / 3f)
+                                        .clip(RoundedCornerShape(24.dp)),
+                                    contentScale = ContentScale.Crop,
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(4f / 3f)
+                                        .clip(RoundedCornerShape(24.dp))
+                                        .background(style.textColor.copy(alpha = 0.15f)),
+                                )
+                            }
                             Spacer(modifier = Modifier.height(40.dp))
                         }
 
@@ -146,6 +165,14 @@ class ShareCardRenderer @Inject constructor(
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         composeView.draw(Canvas(bitmap))
         return bitmap
+    }
+
+    private suspend fun loadCover(url: String): ImageBitmap? = withContext(Dispatchers.Default) {
+        val request = ImageRequest.Builder(context).data(url).build()
+        val result = SingletonImageLoader.get(context).execute(request)
+        (result as? SuccessResult)?.let { success ->
+            (success.image as? BitmapImage)?.bitmap?.asImageBitmap()
+        }
     }
 
     fun saveToCache(bitmap: Bitmap): File {

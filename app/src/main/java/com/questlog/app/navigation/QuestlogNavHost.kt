@@ -168,7 +168,6 @@ fun QuestlogNavHost(
             LibraryScreen(
                 onGameClick = { gameId -> navController.navigate("game/$gameId") },
                 onCaptureClick = { navController.navigate(QuestlogRoute.Capture.route) },
-                onSettingsClick = { navController.navigate(QuestlogRoute.Settings.route) },
             )
         }
 
@@ -213,9 +212,7 @@ fun QuestlogNavHost(
         }
 
         composable(QuestlogRoute.Settings.route) {
-            SettingsScreen(
-                onBack = { navController.popBackStack() },
-            )
+            SettingsScreen()
         }
     }
 }
