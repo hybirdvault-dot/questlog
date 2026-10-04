@@ -53,11 +53,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.questlog.app.core.model.GamePreview
 import com.questlog.app.ui.designsystem.QuestlogEmptyState
 import com.questlog.app.ui.designsystem.QuestlogGameImage
-import com.questlog.app.ui.designsystem.QuestlogGray
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
 import java.util.Locale
 
 @Composable
@@ -229,7 +228,7 @@ private fun DiscoverResultCard(game: GamePreview, onClick: () -> Unit) {
                     Text(
                         text = meta,
                         style = MaterialTheme.typography.bodySmall,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                         modifier = Modifier.padding(top = QuestlogSpacing.Xs),
                     )
                 }
@@ -279,7 +278,7 @@ private fun GameDetailOverlay(
                 Text(
                     text = meta,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = QuestlogGray,
+                    color = QuestlogSoftBrown,
                     modifier = Modifier.padding(top = QuestlogSpacing.Xs),
                 )
             }

@@ -14,16 +14,16 @@ object ShareCardStyle {
     val GameCard = CardStyle(
         widthPx = 1080,
         heightPx = 1080,
-        background = Color(0xFF1A1A2E),
-        textColor = Color(0xFFFAF8F5),
-        accentColor = Color(0xFF7C3AED),
+        background = Color(0xFF1E1712),
+        textColor = Color(0xFFF5E9DC),
+        accentColor = Color(0xFFE07856),
     )
 
     val StatsCard = CardStyle(
         widthPx = 1080,
         heightPx = 1920,
-        background = Color(0xFF1A1A2E),
-        textColor = Color(0xFFFAF8F5),
-        accentColor = Color(0xFFF97316),
+        background = Color(0xFF1E1712),
+        textColor = Color(0xFFF5E9DC),
+        accentColor = Color(0xFF7A9E7E),
     )
 }

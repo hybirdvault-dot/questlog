@@ -33,11 +33,9 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
-import com.questlog.app.ui.designsystem.QuestlogCoral
-import com.questlog.app.ui.designsystem.QuestlogGray
-import com.questlog.app.ui.designsystem.QuestlogGreen
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
+import com.questlog.app.ui.designsystem.QuestlogTerracotta
 
 @Composable
 fun GameCard(game: Game, onClick: () -> Unit) {
@@ -62,8 +60,8 @@ fun GameCard(game: Game, onClick: () -> Unit) {
                         .fillMaxWidth()
                         .aspectRatio(3f / 4f),
                     contentScale = ContentScale.Crop,
-                    placeholder = ColorPainter(QuestlogGray.copy(alpha = 0.1f)),
-                    error = ColorPainter(QuestlogGray.copy(alpha = 0.1f)),
+                    placeholder = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.1f)),
+                    error = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.1f)),
                 )
 
                 // Status badge overlaid on image
@@ -103,9 +101,9 @@ fun GameCard(game: Game, onClick: () -> Unit) {
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = null,
                                 tint = if (index < rating) {
-                                    QuestlogCoral
+                                    QuestlogTerracotta
                                 } else {
-                                    QuestlogGray.copy(alpha = 0.2f)
+                                    QuestlogSoftBrown.copy(alpha = 0.2f)
                                 },
                                 modifier = Modifier.size(12.dp),
                             )
@@ -117,7 +115,7 @@ fun GameCard(game: Game, onClick: () -> Unit) {
                     Text(
                         text = year.toString(),
                         style = MaterialTheme.typography.bodySmall,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                         modifier = Modifier.padding(top = 2.dp),
                     )
                 }

@@ -52,11 +52,11 @@ import coil3.request.crossfade
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GamePreview
 import com.questlog.app.ui.designsystem.QuestlogGameImage
-import com.questlog.app.ui.designsystem.QuestlogGray
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
+import com.questlog.app.ui.designsystem.QuestlogTerracotta
 import java.util.Locale
 
 @Composable
@@ -144,7 +144,7 @@ private fun CaptureIdleContent(onSearchManually: () -> Unit) {
             Icon(
                 imageVector = Icons.Filled.CameraAlt,
                 contentDescription = null,
-                tint = QuestlogViolet,
+                tint = QuestlogTerracotta,
                 modifier = Modifier.size(48.dp),
             )
         }
@@ -160,7 +160,7 @@ private fun CaptureIdleContent(onSearchManually: () -> Unit) {
         Text(
             text = "Share a screenshot or link from another app, or search manually.",
             style = MaterialTheme.typography.bodyMedium,
-            color = QuestlogGray,
+            color = QuestlogSoftBrown,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = QuestlogSpacing.S),
         )
@@ -182,14 +182,14 @@ private fun CaptureLoadingContent() {
         verticalArrangement = Arrangement.Center,
     ) {
         CircularProgressIndicator(
-            color = QuestlogViolet,
+            color = QuestlogTerracotta,
             modifier = Modifier.size(48.dp),
             strokeWidth = 4.dp,
         )
         Text(
             text = "Looking for games...",
             style = MaterialTheme.typography.bodyMedium,
-            color = QuestlogGray,
+            color = QuestlogSoftBrown,
             modifier = Modifier.padding(top = QuestlogSpacing.L),
         )
     }
@@ -208,7 +208,7 @@ private fun CandidatesContent(
         Text(
             text = "Possible matches — tap to confirm",
             style = MaterialTheme.typography.labelLarge,
-            color = QuestlogViolet,
+            color = QuestlogTerracotta,
             modifier = Modifier.padding(vertical = QuestlogSpacing.M),
         )
         LazyColumn(
@@ -253,15 +253,15 @@ private fun CaptureResultContent(
                         .fillMaxWidth()
                         .aspectRatio(16f / 9f),
                     contentScale = ContentScale.Crop,
-                    placeholder = ColorPainter(QuestlogGray.copy(alpha = 0.1f)),
-                    error = ColorPainter(QuestlogGray.copy(alpha = 0.1f)),
+                    placeholder = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.1f)),
+                    error = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.1f)),
                 )
 
                 Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                     Text(
                         text = "We found a match",
                         style = MaterialTheme.typography.labelMedium,
-                        color = QuestlogViolet,
+                        color = QuestlogTerracotta,
                     )
 
                     Text(
@@ -278,7 +278,7 @@ private fun CaptureResultContent(
                         Text(
                             text = meta,
                             style = MaterialTheme.typography.bodySmall,
-                            color = QuestlogGray,
+                            color = QuestlogSoftBrown,
                             modifier = Modifier.padding(top = QuestlogSpacing.Xs),
                         )
                     }
@@ -375,7 +375,7 @@ private fun CandidateRow(candidate: GamePreview, onClick: () -> Unit) {
                     Text(
                         text = meta,
                         style = MaterialTheme.typography.bodySmall,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                         modifier = Modifier.padding(top = QuestlogSpacing.Xs),
                     )
                 }

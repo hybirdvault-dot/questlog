@@ -46,9 +46,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.questlog.app.core.model.GameStatus
 import com.questlog.app.ui.designsystem.QuestlogEmptyState
-import com.questlog.app.ui.designsystem.QuestlogGray
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
+import com.questlog.app.ui.designsystem.QuestlogTerracotta
 
 private val libraryFilters = listOf(
     null to "All",
@@ -92,7 +92,7 @@ fun LibraryScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onCaptureClick,
-                containerColor = QuestlogViolet,
+                containerColor = QuestlogTerracotta,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
             ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "Add game")
@@ -123,7 +123,7 @@ fun LibraryScreen(
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = QuestlogViolet,
+                            selectedContainerColor = QuestlogTerracotta,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                         ),
                     )
@@ -140,7 +140,7 @@ fun LibraryScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(color = QuestlogViolet)
+                    CircularProgressIndicator(color = QuestlogTerracotta)
                 }
 
                 uiState.games.isEmpty() -> CenteredMessage(
@@ -153,7 +153,7 @@ fun LibraryScreen(
                     Text(
                         text = "${uiState.games.size} game${if (uiState.games.size != 1) "s" else ""}",
                         style = MaterialTheme.typography.labelMedium,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                         modifier = Modifier.padding(horizontal = QuestlogSpacing.L, vertical = QuestlogSpacing.Xs),
                     )
 

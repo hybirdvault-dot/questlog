@@ -40,13 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.questlog.app.core.model.GameStatus
-import com.questlog.app.ui.designsystem.QuestlogCoral
 import com.questlog.app.ui.designsystem.QuestlogEmptyState
-import com.questlog.app.ui.designsystem.QuestlogGray
-import com.questlog.app.ui.designsystem.QuestlogGreen
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
+import com.questlog.app.ui.designsystem.QuestlogSage
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
+import com.questlog.app.ui.designsystem.QuestlogTerracotta
 import kotlin.math.roundToInt
 
 @Composable
@@ -82,7 +81,7 @@ fun StatsScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(color = QuestlogViolet)
+                    CircularProgressIndicator(color = QuestlogTerracotta)
                 }
 
                 uiState.errorMessage != null -> CenteredMessage(
@@ -114,7 +113,7 @@ private fun StatsContent(uiState: StatsUiState) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = QuestlogViolet,
+                    containerColor = QuestlogTerracotta,
                 ),
             ) {
                 Column(
@@ -155,7 +154,7 @@ private fun StatsContent(uiState: StatsUiState) {
                     Text(
                         text = "Completion Rate",
                         style = MaterialTheme.typography.labelLarge,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                     )
                     Spacer(modifier = Modifier.height(QuestlogSpacing.S))
                     Row(
@@ -168,20 +167,20 @@ private fun StatsContent(uiState: StatsUiState) {
                         Text(
                             text = "%",
                             style = MaterialTheme.typography.headlineMedium,
-                            color = QuestlogGray,
+                            color = QuestlogSoftBrown,
                             modifier = Modifier.padding(bottom = QuestlogSpacing.S),
                         )
                     }
                     Spacer(modifier = Modifier.height(QuestlogSpacing.S))
                     QuestlogProgressIndicator(
                         progress = uiState.completionRate,
-                        color = QuestlogGreen,
+                        color = QuestlogSage,
                     )
                     Spacer(modifier = Modifier.height(QuestlogSpacing.Xs))
                     Text(
                         text = "${uiState.completedGames} of ${uiState.totalGames} completed",
                         style = MaterialTheme.typography.bodySmall,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                     )
                 }
             }
@@ -265,10 +264,10 @@ private fun CenteredMessage(title: String, subtitle: String) {
 
 private val GameStatus.dotColor: Color
     get() = when (this) {
-        GameStatus.WANT -> QuestlogViolet
-        GameStatus.PLAYING -> QuestlogCoral
-        GameStatus.COMPLETED -> QuestlogGreen
-        GameStatus.DROPPED -> QuestlogGray
+        GameStatus.WANT -> QuestlogTerracotta
+        GameStatus.PLAYING -> QuestlogTerracotta
+        GameStatus.COMPLETED -> QuestlogSage
+        GameStatus.DROPPED -> QuestlogSoftBrown
     }
 
 private val GameStatus.label: String

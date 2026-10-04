@@ -45,9 +45,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.questlog.app.ui.designsystem.QuestlogGray
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
+import com.questlog.app.ui.designsystem.QuestlogTerracotta
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,7 +118,7 @@ fun SettingsScreen(
             Text(
                 text = "Made with care by the Questlog team",
                 style = MaterialTheme.typography.bodySmall,
-                color = QuestlogGray,
+                color = QuestlogSoftBrown,
                 modifier = Modifier
                     .padding(horizontal = QuestlogSpacing.L)
                     .padding(bottom = QuestlogSpacing.Xl),
@@ -157,7 +157,7 @@ private fun SettingsSection(
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
-            color = QuestlogViolet,
+            color = QuestlogTerracotta,
             modifier = Modifier.padding(horizontal = QuestlogSpacing.L, vertical = QuestlogSpacing.S),
         )
         Card(
@@ -198,7 +198,7 @@ private fun SettingsItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = if (isDestructive) MaterialTheme.colorScheme.error else QuestlogViolet,
+            tint = if (isDestructive) MaterialTheme.colorScheme.error else QuestlogTerracotta,
             modifier = Modifier.size(24.dp),
         )
         Column(
@@ -214,13 +214,13 @@ private fun SettingsItem(
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
-                color = QuestlogGray,
+                color = QuestlogSoftBrown,
             )
         }
         Icon(
             imageVector = Icons.Filled.ChevronRight,
             contentDescription = null,
-            tint = QuestlogGray,
+            tint = QuestlogSoftBrown,
             modifier = Modifier.size(20.dp),
         )
     }

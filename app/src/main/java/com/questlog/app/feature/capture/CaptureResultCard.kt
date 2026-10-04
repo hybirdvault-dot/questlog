@@ -24,11 +24,11 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.questlog.app.core.model.Game
-import com.questlog.app.ui.designsystem.QuestlogGray
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
+import com.questlog.app.ui.designsystem.QuestlogTerracotta
 import java.util.Locale
 
 @Composable
@@ -55,15 +55,15 @@ fun CaptureResultCard(
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f),
                 contentScale = ContentScale.Crop,
-                placeholder = ColorPainter(QuestlogGray.copy(alpha = 0.2f)),
-                error = ColorPainter(QuestlogGray.copy(alpha = 0.2f)),
+                placeholder = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.2f)),
+                error = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.2f)),
             )
 
             Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                 Text(
                     text = "We found a possible match",
                     style = MaterialTheme.typography.labelMedium,
-                    color = QuestlogViolet,
+                    color = QuestlogTerracotta,
                 )
 
                 Text(
@@ -80,7 +80,7 @@ fun CaptureResultCard(
                     Text(
                         text = meta,
                         style = MaterialTheme.typography.bodySmall,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                         modifier = Modifier.padding(top = QuestlogSpacing.Xs),
                     )
                 }

@@ -42,10 +42,10 @@ import com.questlog.app.core.model.GameStatus
 @Composable
 fun QuestlogStatusChip(status: GameStatus) {
     val (label, color) = when (status) {
-        GameStatus.WANT -> "Want to Play" to QuestlogViolet
-        GameStatus.PLAYING -> "Playing" to QuestlogCoral
-        GameStatus.COMPLETED -> "Completed" to QuestlogGreen
-        GameStatus.DROPPED -> "Dropped" to QuestlogGray
+        GameStatus.WANT -> "Want to Play" to QuestlogTerracotta
+        GameStatus.PLAYING -> "Playing" to QuestlogTerracotta
+        GameStatus.COMPLETED -> "Completed" to QuestlogSage
+        GameStatus.DROPPED -> "Dropped" to QuestlogSoftBrown
     }
 
     Surface(
@@ -70,7 +70,7 @@ fun QuestlogPrimaryButton(onClick: () -> Unit, text: String) {
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = QuestlogViolet,
+            containerColor = QuestlogTerracotta,
             contentColor = Color.White,
         ),
         modifier = Modifier.fillMaxWidth(),
@@ -119,13 +119,13 @@ fun QuestlogEmptyState(
             modifier = Modifier
                 .size(72.dp)
                 .clip(CircleShape)
-                .background(QuestlogViolet.copy(alpha = 0.1f)),
+                .background(QuestlogTerracotta.copy(alpha = 0.1f)),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = QuestlogViolet,
+                tint = QuestlogTerracotta,
                 modifier = Modifier.size(36.dp),
             )
         }
@@ -160,7 +160,7 @@ fun QuestlogProBadge() {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(percent = 50))
-            .background(Brush.horizontalGradient(listOf(QuestlogViolet, QuestlogCoral)))
+            .background(Brush.horizontalGradient(listOf(QuestlogTerracotta, QuestlogSage)))
             .padding(horizontal = QuestlogSpacing.S, vertical = QuestlogSpacing.Xs),
     ) {
         Text(
@@ -184,8 +184,8 @@ fun QuestlogGameImage(
             .build(),
         contentDescription = contentDescription,
         modifier = modifier.clip(RoundedCornerShape(12.dp)),
-        placeholder = ColorPainter(QuestlogGray.copy(alpha = 0.15f)),
-        error = ColorPainter(QuestlogGray.copy(alpha = 0.15f)),
+        placeholder = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.15f)),
+        error = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.15f)),
         contentScale = ContentScale.Crop,
     )
 }
@@ -222,7 +222,7 @@ fun QuestlogStatCard(
 fun QuestlogProgressIndicator(
     progress: Float,
     modifier: Modifier = Modifier,
-    color: Color = QuestlogViolet,
+    color: Color = QuestlogTerracotta,
 ) {
     Box(
         modifier = modifier

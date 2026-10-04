@@ -65,12 +65,11 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
-import com.questlog.app.ui.designsystem.QuestlogCoral
-import com.questlog.app.ui.designsystem.QuestlogGray
-import com.questlog.app.ui.designsystem.QuestlogGreen
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
+import com.questlog.app.ui.designsystem.QuestlogSage
+import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
-import com.questlog.app.ui.designsystem.QuestlogViolet
+import com.questlog.app.ui.designsystem.QuestlogTerracotta
 import java.util.Locale
 
 private val statusOptions = listOf(
@@ -155,7 +154,7 @@ fun GameDetailScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(color = QuestlogViolet)
+                    CircularProgressIndicator(color = QuestlogTerracotta)
                 }
 
                 uiState.errorMessage != null -> Box(
@@ -178,7 +177,7 @@ fun GameDetailScreen(
                     Text(
                         text = "Game not found",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                     )
                 }
 
@@ -242,8 +241,8 @@ private fun GameDetailContent(
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f),
                 contentScale = ContentScale.Crop,
-                placeholder = ColorPainter(QuestlogGray.copy(alpha = 0.1f)),
-                error = ColorPainter(QuestlogGray.copy(alpha = 0.1f)),
+                placeholder = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.1f)),
+                error = ColorPainter(QuestlogSoftBrown.copy(alpha = 0.1f)),
             )
         }
 
@@ -262,7 +261,7 @@ private fun GameDetailContent(
                     Text(
                         text = year.toString(),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                     )
                 }
                 game.rawgRating?.let { rating ->
@@ -270,19 +269,19 @@ private fun GameDetailContent(
                         Text(
                             text = "  ·  ",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = QuestlogGray,
+                            color = QuestlogSoftBrown,
                         )
                     }
                     Icon(
                         imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = QuestlogCoral,
+                        tint = QuestlogTerracotta,
                         modifier = Modifier.size(16.dp),
                     )
                     Text(
                         text = " ${String.format(Locale.US, "%.1f", rating)}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = QuestlogGray,
+                        color = QuestlogSoftBrown,
                     )
                 }
             }
@@ -425,7 +424,7 @@ private fun StarRatingRow(rating: Int?, onRatingChange: (Int?) -> Unit) {
             Icon(
                 imageVector = if (value <= current) Icons.Filled.Star else Icons.Outlined.Star,
                 contentDescription = "Rate $value",
-                tint = if (value <= current) QuestlogCoral else QuestlogGray.copy(alpha = 0.3f),
+                tint = if (value <= current) QuestlogTerracotta else QuestlogSoftBrown.copy(alpha = 0.3f),
                 modifier = Modifier
                     .size(32.dp)
                     .clickable { onRatingChange(if (current == value) null else value) },
@@ -436,8 +435,8 @@ private fun StarRatingRow(rating: Int?, onRatingChange: (Int?) -> Unit) {
 
 private val GameStatus.color: Color
     get() = when (this) {
-        GameStatus.WANT -> QuestlogViolet
-        GameStatus.PLAYING -> QuestlogCoral
-        GameStatus.COMPLETED -> QuestlogGreen
-        GameStatus.DROPPED -> QuestlogGray
+        GameStatus.WANT -> QuestlogTerracotta
+        GameStatus.PLAYING -> QuestlogTerracotta
+        GameStatus.COMPLETED -> QuestlogSage
+        GameStatus.DROPPED -> QuestlogSoftBrown
     }
