@@ -6,10 +6,12 @@ import com.questlog.app.core.database.toDomain
 import com.questlog.app.core.database.toEntity
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
+import com.questlog.app.core.model.ProofStatus
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 class GameRepository @Inject constructor(private val gameDao: GameDao) {
 
@@ -33,6 +35,14 @@ class GameRepository @Inject constructor(private val gameDao: GameDao) {
 
     suspend fun findByRawgId(rawgId: Int): Game? =
         gameDao.findByRawgId(rawgId)?.toDomain()
+
+    suspend fun updateProof(
+        id: String,
+        signature: String?,
+        proofAt: Instant?,
+        proofStatus: ProofStatus?,
+        walletAddress: String?,
+    ) = gameDao.updateProof(id, signature, proofAt, proofStatus, walletAddress)
 
     fun countByStatus(): Flow<List<StatusCount>> = gameDao.countByStatus()
 }

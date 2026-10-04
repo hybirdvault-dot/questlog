@@ -6,6 +6,7 @@ import com.questlog.app.core.model.WalletState
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import com.solana.mobilewalletadapter.clientlib.successPayload
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,19 @@ class MwaWalletClient @Inject constructor(
                 pubkey
             }
 
+            is TransactionResult.NoWalletFound<*> -> null
+            is TransactionResult.Failure<*> -> null
+        }
+    }
+
+    suspend fun signTransaction(activity: ComponentActivity, transaction: ByteArray): ByteArray? {
+        val sender = ActivityResultSender(activity)
+        val result = walletAdapter.transact(sender) {
+            signTransactions(arrayOf(transaction))
+        }
+        val signed = result.successPayload?.signedPayloads?.firstOrNull()
+        return when (result) {
+            is TransactionResult.Success<*> -> signed
             is TransactionResult.NoWalletFound<*> -> null
             is TransactionResult.Failure<*> -> null
         }

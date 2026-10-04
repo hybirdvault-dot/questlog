@@ -3,7 +3,14 @@
 package com.questlog.app.feature.game
 
 import android.content.Intent
+import android.net.Uri
+import androidx.activity.ComponentActivity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +55,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,8 +79,11 @@ import coil3.request.crossfade
 import com.questlog.app.R
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
+import com.questlog.app.core.model.ProofStatus
+import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
 import com.questlog.app.ui.designsystem.QuestlogSage
+import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
@@ -86,17 +97,36 @@ private val statusOptions = listOf(
     GameStatus.DROPPED to R.string.status_dropped,
 )
 
+private const val EXPLORER_BASE = "https://explorer.solana.com/tx/"
+
 @Composable
 fun GameDetailScreen(
     onBack: () -> Unit,
     viewModel: GameDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val proofState by viewModel.proofState.collectAsStateWithLifecycle()
     val game = uiState.game
     val context = LocalContext.current
+    val activity = context as? ComponentActivity
     val scope = rememberCoroutineScope()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+
+    LaunchedEffect(proofState) {
+        val state = proofState
+        if (state is ProofUiState.Signing && activity != null) {
+            viewModel.onSigned(
+                viewModel.mwaWalletClient.signTransaction(activity, state.unsignedTransaction),
+            )
+        }
+    }
+
+    val openExplorer: (String) -> Unit = { signature ->
+        context.startActivity(
+            Intent(Intent.ACTION_VIEW, Uri.parse("$EXPLORER_BASE$signature?cluster=devnet")),
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -214,9 +244,12 @@ fun GameDetailScreen(
 
                 else -> GameDetailContent(
                     game = game,
+                    proofState = proofState,
                     onStatusChange = viewModel::updateStatus,
                     onRatingChange = viewModel::updateRating,
                     onNotesChange = viewModel::updateNotes,
+                    onVerify = viewModel::verify,
+                    onOpenExplorer = openExplorer,
                 )
             }
         }
@@ -254,9 +287,12 @@ fun GameDetailScreen(
 @Composable
 private fun GameDetailContent(
     game: Game,
+    proofState: ProofUiState,
     onStatusChange: (GameStatus) -> Unit,
     onRatingChange: (Int?) -> Unit,
     onNotesChange: (String) -> Unit,
+    onVerify: () -> Unit,
+    onOpenExplorer: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -429,6 +465,16 @@ private fun GameDetailContent(
                 }
             }
 
+            if (game.status == GameStatus.COMPLETED) {
+                Spacer(modifier = Modifier.height(QuestlogSpacing.M))
+                ProofCard(
+                    game = game,
+                    proofState = proofState,
+                    onVerify = onVerify,
+                    onOpenExplorer = onOpenExplorer,
+                )
+            }
+
             Spacer(modifier = Modifier.height(QuestlogSpacing.M))
 
             // Notes section
@@ -443,6 +489,109 @@ private fun GameDetailContent(
             )
 
             Spacer(modifier = Modifier.height(QuestlogSpacing.Xl))
+        }
+    }
+}
+
+@Composable
+private fun ProofCard(
+    game: Game,
+    proofState: ProofUiState,
+    onVerify: () -> Unit,
+    onOpenExplorer: (String) -> Unit,
+) {
+    val verified = game.proofStatus == ProofStatus.CONFIRMED
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
+            AnimatedVisibility(
+                visible = verified,
+                enter = slideInVertically(
+                    animationSpec = tween(150, easing = LinearOutSlowInEasing),
+                ) + fadeIn(animationSpec = tween(150)),
+            ) {
+                Column {
+                    Surface(
+                        color = QuestlogSage,
+                        shape = RoundedCornerShape(12.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.share_verified_badge),
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(
+                                horizontal = QuestlogSpacing.M,
+                                vertical = QuestlogSpacing.S,
+                            ),
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(QuestlogSpacing.S))
+                    Text(
+                        text = stringResource(R.string.proof_success),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    game.proofTxSignature?.let { signature ->
+                        Spacer(modifier = Modifier.height(QuestlogSpacing.S))
+                        Text(
+                            text = stringResource(R.string.proof_view_explorer),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = QuestlogTerracotta,
+                            modifier = Modifier.clickable { onOpenExplorer(signature) },
+                        )
+                    }
+                }
+            }
+
+            if (!verified) {
+                when (proofState) {
+                    is ProofUiState.Signing, ProofUiState.Verifying -> {
+                        Text(
+                            text = stringResource(R.string.proof_verifying),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = QuestlogSoftBrown,
+                        )
+                    }
+
+                    ProofUiState.Failed -> {
+                        Text(
+                            text = stringResource(R.string.proof_fail),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                        Spacer(modifier = Modifier.height(QuestlogSpacing.S))
+                        QuestlogSecondaryButton(
+                            onClick = onVerify,
+                            text = stringResource(R.string.action_try_again),
+                        )
+                    }
+
+                    ProofUiState.WalletNotConnected -> {
+                        Text(
+                            text = stringResource(R.string.proof_wallet_needed),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = QuestlogSoftBrown,
+                        )
+                        Spacer(modifier = Modifier.height(QuestlogSpacing.S))
+                        QuestlogPrimaryButton(
+                            onClick = onVerify,
+                            text = stringResource(R.string.proof_cta),
+                        )
+                    }
+
+                    else -> {
+                        QuestlogPrimaryButton(
+                            onClick = onVerify,
+                            text = stringResource(R.string.proof_cta),
+                        )
+                    }
+                }
+            }
         }
     }
 }

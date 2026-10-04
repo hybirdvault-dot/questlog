@@ -78,6 +78,9 @@
     <string name="proof_cta">Verify this achievement</string>
     <string name="proof_fail">Can\'t reach Solana right now. Retry?</string>
     <string name="proof_success">Verified on-chain. That\'s permanent.</string>
+    <string name="proof_verifying">Verifying your achievement…</string>
+    <string name="proof_wallet_needed">Connect a wallet in Settings to verify</string>
+    <string name="proof_view_explorer">View on Explorer</string>
     <string name="share_verified_badge">✓ Verified on Solana</string>
     <string name="wallet_ready">Wallet ready</string>
     <string name="streak_flamekeeper">Flamekeeper — %1$d days</string>
