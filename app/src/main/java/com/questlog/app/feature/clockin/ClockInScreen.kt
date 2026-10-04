@@ -27,11 +27,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -39,14 +41,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.questlog.app.R
+import com.questlog.app.core.haptic.Haptics
 import com.questlog.app.core.model.GameStatus
+import com.questlog.app.data.repository.CheckInResult
 import com.questlog.app.data.repository.StreakTier
+import com.questlog.app.ui.designsystem.ConfettiOverlay
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
 import com.questlog.app.ui.designsystem.QuestlogSage
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
+import com.questlog.app.ui.designsystem.rememberConfettiState
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun ClockInScreen(
@@ -54,6 +61,18 @@ fun ClockInScreen(
     viewModel: ClockInViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val confetti = rememberConfettiState()
+    val view = LocalView.current
+
+    LaunchedEffect(Unit) {
+        viewModel.checkInResult.collect { result ->
+            if (result is CheckInResult.CheckedIn) {
+                confetti.launch()
+                Haptics.success(view)
+                viewModel.consumeCheckInResult()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -93,6 +112,8 @@ fun ClockInScreen(
                     onViewStats = onViewStats,
                 )
             }
+
+            ConfettiOverlay(state = confetti)
         }
     }
 }

@@ -67,6 +67,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -77,9 +78,11 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.questlog.app.R
+import com.questlog.app.core.haptic.Haptics
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
 import com.questlog.app.core.model.ProofStatus
+import com.questlog.app.ui.designsystem.ConfettiOverlay
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
 import com.questlog.app.ui.designsystem.QuestlogSage
@@ -87,6 +90,7 @@ import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
+import com.questlog.app.ui.designsystem.rememberConfettiState
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -109,16 +113,35 @@ fun GameDetailScreen(
     val game = uiState.game
     val context = LocalContext.current
     val activity = context as? ComponentActivity
+    val view = LocalView.current
+    val confetti = rememberConfettiState()
     val scope = rememberCoroutineScope()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(proofState) {
-        val state = proofState
-        if (state is ProofUiState.Signing && activity != null) {
-            viewModel.onSigned(
-                viewModel.mwaWalletClient.signTransaction(activity, state.unsignedTransaction),
-            )
+        when (val state = proofState) {
+            is ProofUiState.Signing -> {
+                if (activity != null) {
+                    val signed = viewModel.mwaWalletClient.signTransaction(
+                        activity,
+                        state.unsignedTransaction,
+                    )
+                    if (signed == null) {
+                        Haptics.warning(view)
+                    }
+                    viewModel.onSigned(signed)
+                }
+            }
+
+            is ProofUiState.Verified -> {
+                confetti.launch()
+                Haptics.success(view)
+            }
+
+            ProofUiState.Failed -> Haptics.warning(view)
+
+            else -> Unit
         }
     }
 
@@ -245,13 +268,20 @@ fun GameDetailScreen(
                 else -> GameDetailContent(
                     game = game,
                     proofState = proofState,
-                    onStatusChange = viewModel::updateStatus,
+                    onStatusChange = { status ->
+                        viewModel.updateStatus(status)
+                        if (status == GameStatus.COMPLETED) {
+                            Haptics.success(view)
+                        }
+                    },
                     onRatingChange = viewModel::updateRating,
                     onNotesChange = viewModel::updateNotes,
                     onVerify = viewModel::verify,
                     onOpenExplorer = openExplorer,
                 )
             }
+
+            ConfettiOverlay(state = confetti)
         }
     }
 

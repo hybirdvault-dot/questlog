@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.questlog.app.core.database.GameDao
 import com.questlog.app.core.model.GameStatus
+import com.questlog.app.data.repository.CheckInResult
 import com.questlog.app.data.repository.ClockInRepository
 import com.questlog.app.data.repository.StreakTier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -61,6 +64,9 @@ class ClockInViewModel @Inject constructor(
             initialValue = ClockInUiState(),
         )
 
+    private val _checkInResult = MutableStateFlow<CheckInResult?>(null)
+    val checkInResult: StateFlow<CheckInResult?> = _checkInResult.asStateFlow()
+
     fun checkIn() {
         val today = Clock.System.now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
@@ -68,7 +74,11 @@ class ClockInViewModel @Inject constructor(
             .toEpochDays()
             .toLong()
         viewModelScope.launch {
-            clockInRepository.checkIn(today)
+            _checkInResult.value = clockInRepository.checkIn(today)
         }
+    }
+
+    fun consumeCheckInResult() {
+        _checkInResult.value = null
     }
 }

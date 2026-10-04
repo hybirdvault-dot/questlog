@@ -35,11 +35,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,15 +55,19 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.questlog.app.R
+import com.questlog.app.core.haptic.Haptics
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GamePreview
+import com.questlog.app.ui.designsystem.ConfettiOverlay
 import com.questlog.app.ui.designsystem.QuestlogGameImage
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
+import com.questlog.app.ui.designsystem.rememberConfettiState
 import java.util.Locale
+import kotlinx.coroutines.delay
 
 @Composable
 fun CaptureScreen(
@@ -72,10 +80,28 @@ fun CaptureScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pendingShare by viewModel.pendingShare.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val view = LocalView.current
+    val confetti = rememberConfettiState()
+    var celebrate by remember { mutableStateOf(false) }
 
     LaunchedEffect(pendingShare) {
         if (pendingShare != null) {
             viewModel.consumePendingShare(context)
+        }
+    }
+
+    LaunchedEffect(uiState) {
+        if (uiState is CaptureUiState.Error) {
+            Haptics.warning(view)
+        }
+    }
+
+    LaunchedEffect(celebrate) {
+        if (celebrate) {
+            confetti.launch()
+            Haptics.success(view)
+            delay(750)
+            onGameSaved()
         }
     }
 
@@ -113,7 +139,7 @@ fun CaptureScreen(
                     game = state.game,
                     onSave = {
                         viewModel.saveGame(state.game)
-                        onGameSaved()
+                        celebrate = true
                     },
                     onShare = { onShare(state.game) },
                 )
@@ -124,6 +150,8 @@ fun CaptureScreen(
                     onSearchManually = onSearchManually,
                 )
             }
+
+            ConfettiOverlay(state = confetti)
         }
     }
 }
