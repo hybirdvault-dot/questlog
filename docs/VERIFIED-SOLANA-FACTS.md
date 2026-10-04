@@ -42,8 +42,11 @@ We write `OkHttpHttpDriver` (~20 lines) in `core/wallet/` — no Ktor.
 - Canonical payload (Build Bible ruling #3):
 
 ```json
-{ "v": 1, "app": "questlog", "title": "Palworld", "rawgId": 58175, "completedAt": 1760000000, "rating": 4.5 }
+{ "v": 1, "app": "questlog", "title": "Palworld", "rawgId": 718135, "completedAt": 1760000000, "rating": 4.5 }
 ```
+
+(rawgId verified live: RAWG search for "palworld" → 718135; the Build Bible's example
+value 58175 is God of War's ID — corrected here.)
 
 - Imports from web3-solana: `com.solana.publickey.SolanaPublicKey`,
   `com.solana.transaction.{AccountMeta, Message, Transaction, TransactionInstruction}`
@@ -61,7 +64,7 @@ We write `OkHttpHttpDriver` (~20 lines) in `core/wallet/` — no Ktor.
 
 | Q | Item | Status |
 |---|---|---|
-| Q1 | RAWG curl proof (search no description / detail has `description_raw`) | **BLOCKED — key in local.properties is INVALID (401). Captain: new free key from rawg.io/apidocs** |
+| Q1 | RAWG curl proof (search no description / detail has `description_raw`) | ✅ CLOSED 2026-10-03 — live key verified, both endpoints confirmed |
 | Q2 | Exact artifacts + versions | ✅ LOCKED (above) |
 | Q3 | Study reference end-to-end | ✅ Done (scaffold) |
 | Q4 | Devnet sanity tx (faucet SOL, latency) | Pending — Oct 4 on device |
@@ -69,4 +72,4 @@ We write `OkHttpHttpDriver` (~20 lines) in `core/wallet/` — no Ktor.
 | Q6 | Failure UX: FAILED → retry, no auto-retry; wallet-reject friendly; 30s timeout | Decided (Build Bible) |
 | Q7 | Local fallback law: proof fields null, game saved, never blocks | Decided (Build Bible) |
 | Q8 | FileProvider + share-card render | Re-verify at A5 |
-| Q9 | `identityUri` = URL we control | GitHub repo URL (after push) |
+| Q9 | `identityUri` = URL we control | ✅ CLOSED — https://github.com/hybirdvault-dot/questlog (pushed 2026-10-03) |
