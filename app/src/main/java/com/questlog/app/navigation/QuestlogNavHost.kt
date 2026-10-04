@@ -186,7 +186,6 @@ fun QuestlogNavHost(
         ) {
             GameDetailScreen(
                 onBack = { navController.popBackStack() },
-                onShare = { /* Share handled in screen */ },
             )
         }
 

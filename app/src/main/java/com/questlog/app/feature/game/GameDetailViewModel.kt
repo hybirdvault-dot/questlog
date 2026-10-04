@@ -1,23 +1,29 @@
 package com.questlog.app.feature.game
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.questlog.app.core.model.GameStatus
+import com.questlog.app.core.share.ShareCardRenderer
 import com.questlog.app.data.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
 @HiltViewModel
 class GameDetailViewModel @Inject constructor(
     private val gameRepository: GameRepository,
+    private val shareCardRenderer: ShareCardRenderer,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -76,6 +82,14 @@ class GameDetailViewModel @Inject constructor(
     fun deleteGame() {
         viewModelScope.launch {
             gameRepository.deleteGame(gameId)
+        }
+    }
+
+    suspend fun shareCard(context: Context): File {
+        val game = requireNotNull(uiState.value.game) { "No game loaded" }
+        return withContext(Dispatchers.Default) {
+            val bitmap = shareCardRenderer.renderGameCard(game)
+            shareCardRenderer.saveToCache(bitmap)
         }
     }
 }

@@ -6,30 +6,40 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.View
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import coil3.compose.AsyncImage
 import com.questlog.app.R
 import com.questlog.app.core.model.Game
+import com.questlog.app.ui.designsystem.QuestlogStatusChip
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
@@ -38,10 +48,10 @@ class ShareCardRenderer @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
 
-    fun renderGameCard(game: Game): Bitmap {
+    fun renderGameCard(game: Game, verifiedBadge: Boolean = false): Bitmap {
+        val style = ShareCardStyle.GameCard
         val composeView = ComposeView(context).apply {
             setContent {
-                val style = ShareCardStyle.GameCard
                 val density = LocalDensity.current
                 val widthDp = with(density) { style.widthPx.toDp() }
                 val heightDp = with(density) { style.heightPx.toDp() }
@@ -49,48 +59,76 @@ class ShareCardRenderer @Inject constructor(
                     modifier = Modifier
                         .size(widthDp, heightDp)
                         .background(style.background)
-                        .padding(48.dp),
+                        .padding(56.dp),
                 ) {
-                    Column {
+                    Column(modifier = Modifier.fillMaxSize()) {
                         if (game.coverUrl != null) {
                             AsyncImage(
                                 model = game.coverUrl,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .aspectRatio(16f / 9f)
-                                    .clip(RoundedCornerShape(16.dp)),
+                                    .aspectRatio(4f / 3f)
+                                    .clip(RoundedCornerShape(24.dp)),
                                 contentScale = ContentScale.Crop,
                             )
+                            Spacer(modifier = Modifier.height(40.dp))
                         }
-                        Spacer(modifier = Modifier.height(24.dp))
+
                         Text(
                             text = game.title,
                             color = style.textColor,
-                            fontSize = 36.sp,
+                            fontSize = 52.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 2,
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "${game.releaseYear} · ${game.platforms.take(2).joinToString(", ")}",
-                            color = style.textColor.copy(alpha = 0.7f),
-                            fontSize = 20.sp,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(
-                                R.string.game_rating,
-                                game.rawgRating?.toString() ?: stringResource(R.string.value_unavailable),
-                            ),
-                            color = style.accentColor,
-                            fontSize = 20.sp,
-                        )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            repeat(5) { index ->
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = null,
+                                    tint = if (index < (game.personalRating ?: 0)) {
+                                        style.accentColor
+                                    } else {
+                                        style.textColor.copy(alpha = 0.2f)
+                                    },
+                                    modifier = Modifier.size(40.dp),
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        QuestlogStatusChip(status = game.status)
+
+                        if (verifiedBadge) {
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Surface(
+                                color = ShareCardStyle.VerifiedBadge,
+                                shape = RoundedCornerShape(16.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.share_verified_badge),
+                                    color = Color.White,
+                                    fontSize = 26.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 20.dp),
+                                )
+                            }
+                        }
+
                         Spacer(modifier = Modifier.weight(1f))
+
                         Text(
                             text = stringResource(R.string.app_name),
                             color = style.textColor.copy(alpha = 0.4f),
-                            fontSize = 16.sp,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Medium,
                             modifier = Modifier.align(Alignment.End),
                         )
                     }
@@ -98,8 +136,8 @@ class ShareCardRenderer @Inject constructor(
             }
         }
 
-        val width = 1080
-        val height = 1080
+        val width = style.widthPx
+        val height = style.heightPx
         composeView.measure(
             View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),

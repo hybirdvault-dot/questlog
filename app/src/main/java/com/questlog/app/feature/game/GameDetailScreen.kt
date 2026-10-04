@@ -2,6 +2,7 @@
 
 package com.questlog.app.feature.game
 
+import android.content.Intent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,14 +51,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -72,6 +76,7 @@ import com.questlog.app.ui.designsystem.QuestlogSage
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 private val statusOptions = listOf(
@@ -84,11 +89,12 @@ private val statusOptions = listOf(
 @Composable
 fun GameDetailScreen(
     onBack: () -> Unit,
-    onShare: (Game) -> Unit,
     viewModel: GameDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val game = uiState.game
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
 
@@ -117,10 +123,28 @@ fun GameDetailScreen(
                             onDismissRequest = { showMenu = false },
                         ) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.action_share)) },
+                                text = { Text(stringResource(R.string.action_brag)) },
                                 onClick = {
                                     showMenu = false
-                                    onShare(game)
+                                    scope.launch {
+                                        val file = viewModel.shareCard(context)
+                                        val uri = FileProvider.getUriForFile(
+                                            context,
+                                            "${context.packageName}.fileprovider",
+                                            file,
+                                        )
+                                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "image/png"
+                                            putExtra(Intent.EXTRA_STREAM, uri)
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        }
+                                        context.startActivity(
+                                            Intent.createChooser(
+                                                sendIntent,
+                                                context.getString(R.string.action_brag),
+                                            ),
+                                        )
+                                    }
                                 },
                                 leadingIcon = {
                                     Icon(Icons.Filled.Share, contentDescription = null)
