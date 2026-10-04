@@ -83,6 +83,9 @@
     <string name="streak_flamekeeper">Flamekeeper — %1$d days</string>
 
     <!-- Settings -->
+    <string name="settings_wallet">Wallet</string>
+    <string name="settings_connect_wallet">Connect Wallet</string>
+    <string name="settings_connect_wallet_subtitle">Link your Solana wallet</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_subtitle">Follows system setting</string>

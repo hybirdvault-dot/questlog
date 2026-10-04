@@ -3,6 +3,7 @@ package com.questlog.app.feature.settings
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
@@ -40,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.questlog.app.R
+import com.questlog.app.core.model.WalletState
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
@@ -58,6 +62,8 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val activity = context as? ComponentActivity
+    val walletState by viewModel.walletState.collectAsStateWithLifecycle()
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -87,6 +93,24 @@ fun SettingsScreen(
                     title = stringResource(R.string.settings_theme),
                     subtitle = stringResource(R.string.settings_theme_subtitle),
                     onClick = {},
+                )
+            }
+
+            SettingsSection(title = stringResource(R.string.settings_wallet)) {
+                val connected = walletState as? WalletState.Connected
+                SettingsItem(
+                    icon = Icons.Filled.AccountBalanceWallet,
+                    title = if (connected != null) {
+                        stringResource(R.string.wallet_ready)
+                    } else {
+                        stringResource(R.string.settings_connect_wallet)
+                    },
+                    subtitle = if (connected != null) {
+                        truncateAddress(connected.pubkey)
+                    } else {
+                        stringResource(R.string.settings_connect_wallet_subtitle)
+                    },
+                    onClick = { activity?.let { viewModel.connectWallet(it) } },
                 )
             }
 
@@ -230,6 +254,13 @@ private fun SettingsItem(
         )
     }
 }
+
+private fun truncateAddress(address: String): String =
+    if (address.length <= 12) {
+        address
+    } else {
+        "${address.take(4)}…${address.takeLast(4)}"
+    }
 
 private fun openPlayStore(context: Context) {
     try {
