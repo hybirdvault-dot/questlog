@@ -21,6 +21,10 @@ fun RawgGameDto.toDomain(): Game = Game(
     addedAt = Clock.System.now(),
     updatedAt = Clock.System.now(),
     completedAt = null,
+    proofTxSignature = null,
+    proofAt = null,
+    proofStatus = null,
+    proofWalletAddress = null,
 )
 
 fun RawgGameDto.toPreview(): GamePreview = GamePreview(

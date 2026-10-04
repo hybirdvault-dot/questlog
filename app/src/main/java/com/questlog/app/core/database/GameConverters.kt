@@ -2,6 +2,7 @@ package com.questlog.app.core.database
 
 import androidx.room.TypeConverter
 import com.questlog.app.core.model.GameStatus
+import com.questlog.app.core.model.ProofStatus
 import kotlinx.datetime.Instant
 
 class GameConverters {
@@ -26,4 +27,10 @@ class GameConverters {
 
     @TypeConverter
     fun stringToGameStatus(value: String): GameStatus = GameStatus.valueOf(value)
+
+    @TypeConverter
+    fun proofStatusToString(status: ProofStatus?): String? = status?.name
+
+    @TypeConverter
+    fun stringToProofStatus(value: String?): ProofStatus? = value?.let(ProofStatus::valueOf)
 }

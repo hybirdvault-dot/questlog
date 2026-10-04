@@ -146,6 +146,12 @@ dependencies {
     // --- OneSignal (push notifications) ---
     implementation(libs.onesignal)
 
+    // --- Solana (on-chain proof) ---
+    implementation(libs.solana.web3.solana)
+    implementation(libs.solana.rpc.core)
+    implementation(libs.solana.mobile.wallet.adapter.clientlib.ktx)
+    implementation(libs.multimult)
+
     // --- Tests ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)

@@ -5,6 +5,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
+import com.questlog.app.core.model.ProofStatus
 import kotlinx.datetime.Instant
 
 @Entity(
@@ -30,6 +31,10 @@ data class GameEntity(
     val addedAt: Instant,
     val updatedAt: Instant,
     val completedAt: Instant?,
+    val proofTxSignature: String?,
+    val proofAt: Instant?,
+    val proofStatus: ProofStatus?,
+    val proofWalletAddress: String?,
 )
 
 fun GameEntity.toDomain(): Game = Game(
@@ -47,6 +52,10 @@ fun GameEntity.toDomain(): Game = Game(
     addedAt = addedAt,
     updatedAt = updatedAt,
     completedAt = completedAt,
+    proofTxSignature = proofTxSignature,
+    proofAt = proofAt,
+    proofStatus = proofStatus,
+    proofWalletAddress = proofWalletAddress,
 )
 
 fun Game.toEntity(): GameEntity = GameEntity(
@@ -64,4 +73,8 @@ fun Game.toEntity(): GameEntity = GameEntity(
     addedAt = addedAt,
     updatedAt = updatedAt,
     completedAt = completedAt,
+    proofTxSignature = proofTxSignature,
+    proofAt = proofAt,
+    proofStatus = proofStatus,
+    proofWalletAddress = proofWalletAddress,
 )

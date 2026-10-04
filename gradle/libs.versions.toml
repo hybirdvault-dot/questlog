@@ -34,6 +34,12 @@ coil = "3.0.4"
 mlkitText = "16.0.1"
 onesignal = "5.10.2"
 
+# --- Solana (on-chain proof) ---
+solanaWeb3 = "0.2.2"
+solanaRpcCore = "0.2.3"
+solanaMobileWalletAdapter = "2.0.0"
+multimult = "0.2.0"
+
 # --- Testing ---
 junit = "4.13.2"
 androidxTestJunit = "1.2.1"
@@ -99,6 +105,12 @@ mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition"
 
 # --- OneSignal ---
 onesignal = { group = "com.onesignal", name = "OneSignal", version.ref = "onesignal" }
+
+# --- Solana (on-chain proof) ---
+solana-web3-solana = { group = "com.solanamobile", name = "web3-solana", version.ref = "solanaWeb3" }
+solana-rpc-core = { group = "com.solanamobile", name = "rpc-core", version.ref = "solanaRpcCore" }
+solana-mobile-wallet-adapter-clientlib-ktx = { group = "com.solanamobile", name = "mobile-wallet-adapter-clientlib-ktx", version.ref = "solanaMobileWalletAdapter" }
+multimult = { group = "io.github.funkatronics", name = "multimult", version.ref = "multimult" }
 
 # --- Testing ---
 junit = { group = "junit", name = "junit", version.ref = "junit" }

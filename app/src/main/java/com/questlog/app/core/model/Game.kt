@@ -17,4 +17,8 @@ data class Game(
     val addedAt: Instant,
     val updatedAt: Instant,
     val completedAt: Instant?,
+    val proofTxSignature: String?,
+    val proofAt: Instant?,
+    val proofStatus: ProofStatus?,
+    val proofWalletAddress: String?,
 )
