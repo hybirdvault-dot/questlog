@@ -12,7 +12,7 @@ data class RawgGameDto(
     val released: String?,
     @SerializedName("background_image") val backgroundImage: String?,
     val rating: Double?,
-    val description: String?,
+    @SerializedName("description_raw") val description: String?,
     val platforms: List<RawgPlatformWrapper>?,
 )
 
