@@ -46,10 +46,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.questlog.app.R
 import com.questlog.app.core.model.GamePreview
 import com.questlog.app.ui.designsystem.QuestlogEmptyState
 import com.questlog.app.ui.designsystem.QuestlogGameImage
@@ -67,17 +69,18 @@ fun DiscoverScreen() {
     val addedToLibrary by viewModel.addedToLibrary.collectAsStateWithLifecycle()
     var query by rememberSaveable { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
+    val addedMessage = stringResource(R.string.discover_added_to_library)
 
     LaunchedEffect(addedToLibrary) {
         if (addedToLibrary) {
-            snackbarHostState.showSnackbar("Added to your library")
+            snackbarHostState.showSnackbar(addedMessage)
             viewModel.resetAddedFlag()
         }
     }
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Discover") })
+            TopAppBar(title = { Text(stringResource(R.string.nav_discover)) })
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
@@ -100,7 +103,7 @@ fun DiscoverScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = QuestlogSpacing.M),
-                    placeholder = { Text("Search games") },
+                    placeholder = { Text(stringResource(R.string.discover_search_placeholder)) },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Search, contentDescription = null)
                     },
@@ -110,8 +113,8 @@ fun DiscoverScreen() {
 
                 when (val state = uiState) {
                     DiscoverUiState.Idle -> CenteredMessage(
-                        title = "Find your next game",
-                        subtitle = "Search by title to add it to your library.",
+                        title = stringResource(R.string.discover_idle_title),
+                        subtitle = stringResource(R.string.discover_idle_subtitle),
                     )
 
                     DiscoverUiState.Loading -> Box(
@@ -134,14 +137,14 @@ fun DiscoverScreen() {
                     }
 
                     DiscoverUiState.Empty -> CenteredMessage(
-                        title = "No games found",
-                        subtitle = "Try a different search term.",
+                        title = stringResource(R.string.discover_empty_title),
+                        subtitle = stringResource(R.string.discover_empty_subtitle),
                     )
 
                     is DiscoverUiState.Error -> CenteredMessage(
-                        title = "Search failed",
+                        title = stringResource(R.string.discover_error_title),
                         subtitle = state.message,
-                        actionText = "Try again",
+                        actionText = stringResource(R.string.action_try_again),
                         onAction = { viewModel.search(query) },
                     )
                 }
@@ -169,7 +172,7 @@ fun DiscoverScreen() {
 @Composable
 private fun CenteredMessage(
     title: String,
-    subtitle: String,
+    subtitle: String = "",
     actionText: String = "",
     onAction: (() -> Unit)? = null,
 ) {
@@ -285,7 +288,10 @@ private fun GameDetailOverlay(
 
             detail.rawgRating?.let { rating ->
                 Text(
-                    text = "RAWG: ${String.format(Locale.US, "%.1f", rating)}/5",
+                    text = stringResource(
+                        R.string.game_rating,
+                        String.format(Locale.US, "%.1f", rating),
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = QuestlogSpacing.S),
                 )
@@ -308,10 +314,16 @@ private fun GameDetailOverlay(
                 horizontalArrangement = Arrangement.spacedBy(QuestlogSpacing.M),
             ) {
                 Box(modifier = Modifier.weight(1f)) {
-                    QuestlogSecondaryButton(onClick = onDismiss, text = "Cancel")
+                    QuestlogSecondaryButton(
+                        onClick = onDismiss,
+                        text = stringResource(R.string.action_cancel),
+                    )
                 }
                 Box(modifier = Modifier.weight(1f)) {
-                    QuestlogPrimaryButton(onClick = onAddToLibrary, text = "Add to Library")
+                    QuestlogPrimaryButton(
+                        onClick = onAddToLibrary,
+                        text = stringResource(R.string.action_add_to_library),
+                    )
                 }
             }
         }

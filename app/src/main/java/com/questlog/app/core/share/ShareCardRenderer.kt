@@ -22,11 +22,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import coil3.compose.AsyncImage
+import com.questlog.app.R
 import com.questlog.app.core.model.Game
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
@@ -77,13 +79,16 @@ class ShareCardRenderer @Inject constructor(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "RAWG: ${game.rawgRating ?: "N/A"}/5",
+                            text = stringResource(
+                                R.string.game_rating,
+                                game.rawgRating?.toString() ?: stringResource(R.string.value_unavailable),
+                            ),
                             color = style.accentColor,
                             fontSize = 20.sp,
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
-                            text = "Questlog",
+                            text = stringResource(R.string.app_name),
                             color = style.textColor.copy(alpha = 0.4f),
                             fontSize = 16.sp,
                             modifier = Modifier.align(Alignment.End),

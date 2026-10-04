@@ -44,7 +44,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.questlog.app.R
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
@@ -61,12 +63,12 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.nav_settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.action_back),
                         )
                     }
                 },
@@ -79,35 +81,35 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
         ) {
-            SettingsSection(title = "Appearance") {
+            SettingsSection(title = stringResource(R.string.settings_appearance)) {
                 SettingsItem(
                     icon = Icons.Filled.Palette,
-                    title = "Theme",
-                    subtitle = "Follows system setting",
+                    title = stringResource(R.string.settings_theme),
+                    subtitle = stringResource(R.string.settings_theme_subtitle),
                     onClick = {},
                 )
             }
 
-            SettingsSection(title = "About") {
+            SettingsSection(title = stringResource(R.string.settings_about)) {
                 SettingsItem(
                     icon = Icons.Filled.Info,
-                    title = "About Questlog",
-                    subtitle = "Version 1.0.0",
+                    title = stringResource(R.string.settings_about_questlog),
+                    subtitle = stringResource(R.string.settings_version),
                     onClick = {},
                 )
                 SettingsItem(
                     icon = Icons.Filled.Info,
-                    title = "Rate on Play Store",
-                    subtitle = "Help us grow",
+                    title = stringResource(R.string.settings_rate),
+                    subtitle = stringResource(R.string.settings_rate_subtitle),
                     onClick = { openPlayStore(context) },
                 )
             }
 
-            SettingsSection(title = "Data") {
+            SettingsSection(title = stringResource(R.string.settings_data)) {
                 SettingsItem(
                     icon = Icons.Filled.Delete,
-                    title = "Delete all data",
-                    subtitle = "Remove all games and settings",
+                    title = stringResource(R.string.settings_delete_all),
+                    subtitle = stringResource(R.string.settings_delete_all_subtitle),
                     onClick = { showDeleteDialog = true },
                     isDestructive = true,
                 )
@@ -116,7 +118,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(QuestlogSpacing.Xl))
 
             Text(
-                text = "Made with care by the Questlog team",
+                text = stringResource(R.string.settings_footer),
                 style = MaterialTheme.typography.bodySmall,
                 color = QuestlogSoftBrown,
                 modifier = Modifier
@@ -129,19 +131,22 @@ fun SettingsScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete all data?") },
-            text = { Text("This will permanently remove all your games, ratings, and notes. This cannot be undone.") },
+            title = { Text(stringResource(R.string.delete_all_title)) },
+            text = { Text(stringResource(R.string.delete_all_message)) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.deleteAllData()
                 }) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(
+                        text = stringResource(R.string.action_delete),
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             },
         )

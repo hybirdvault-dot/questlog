@@ -56,6 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -63,6 +64,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.questlog.app.R
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
@@ -73,10 +75,10 @@ import com.questlog.app.ui.designsystem.QuestlogTerracotta
 import java.util.Locale
 
 private val statusOptions = listOf(
-    GameStatus.WANT to "Want",
-    GameStatus.PLAYING to "Playing",
-    GameStatus.COMPLETED to "Completed",
-    GameStatus.DROPPED to "Dropped",
+    GameStatus.WANT to R.string.status_want,
+    GameStatus.PLAYING to R.string.status_playing,
+    GameStatus.COMPLETED to R.string.status_completed,
+    GameStatus.DROPPED to R.string.status_dropped,
 )
 
 @Composable
@@ -93,12 +95,12 @@ fun GameDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(game?.title ?: "Game Detail") },
+                title = { Text(game?.title ?: stringResource(R.string.game_detail_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.action_back),
                         )
                     }
                 },
@@ -107,7 +109,7 @@ fun GameDetailScreen(
                         IconButton(onClick = { showMenu = true }) {
                             Icon(
                                 imageVector = Icons.Filled.MoreVert,
-                                contentDescription = "More",
+                                contentDescription = stringResource(R.string.action_more),
                             )
                         }
                         DropdownMenu(
@@ -115,7 +117,7 @@ fun GameDetailScreen(
                             onDismissRequest = { showMenu = false },
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Share") },
+                                text = { Text(stringResource(R.string.action_share)) },
                                 onClick = {
                                     showMenu = false
                                     onShare(game)
@@ -125,7 +127,12 @@ fun GameDetailScreen(
                                 },
                             )
                             DropdownMenuItem(
-                                text = { Text("Delete", color = MaterialTheme.colorScheme.error) },
+                                text = {
+                                    Text(
+                                        text = stringResource(R.string.action_delete),
+                                        color = MaterialTheme.colorScheme.error,
+                                    )
+                                },
                                 onClick = {
                                     showMenu = false
                                     showDeleteDialog = true
@@ -175,7 +182,7 @@ fun GameDetailScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Game not found",
+                        text = stringResource(R.string.game_not_found),
                         style = MaterialTheme.typography.bodyMedium,
                         color = QuestlogSoftBrown,
                     )
@@ -194,8 +201,8 @@ fun GameDetailScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Game?") },
-            text = { Text("This will permanently remove this game from your library. This cannot be undone.") },
+            title = { Text(stringResource(R.string.delete_game_title)) },
+            text = { Text(stringResource(R.string.delete_game_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -204,12 +211,15 @@ fun GameDetailScreen(
                         onBack()
                     },
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(
+                        text = stringResource(R.string.action_delete),
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             },
         )
@@ -315,7 +325,7 @@ private fun GameDetailContent(
             game.description?.let { desc ->
                 if (desc.isNotBlank()) {
                     Text(
-                        text = "About",
+                        text = stringResource(R.string.game_about),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(top = QuestlogSpacing.L),
                     )
@@ -340,14 +350,14 @@ private fun GameDetailContent(
             ) {
                 Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                     Text(
-                        text = "Status",
+                        text = stringResource(R.string.game_status_section),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(modifier = Modifier.height(QuestlogSpacing.S))
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(QuestlogSpacing.S),
                     ) {
-                        statusOptions.forEach { (status, label) ->
+                        statusOptions.forEach { (status, labelRes) ->
                             val isSelected = status == game.status
                             val animatedColor by animateColorAsState(
                                 targetValue = if (isSelected) status.color else Color.Transparent,
@@ -358,7 +368,7 @@ private fun GameDetailContent(
                                 onClick = { onStatusChange(status) },
                                 label = {
                                     Text(
-                                        text = label,
+                                        text = stringResource(labelRes),
                                         style = MaterialTheme.typography.labelMedium,
                                     )
                                 },
@@ -384,7 +394,7 @@ private fun GameDetailContent(
             ) {
                 Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                     Text(
-                        text = "Your Rating",
+                        text = stringResource(R.string.game_your_rating),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(modifier = Modifier.height(QuestlogSpacing.S))
@@ -402,8 +412,8 @@ private fun GameDetailContent(
                 value = game.notes.orEmpty(),
                 onValueChange = onNotesChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Notes") },
-                placeholder = { Text("Add your thoughts about this game...") },
+                label = { Text(stringResource(R.string.game_notes_label)) },
+                placeholder = { Text(stringResource(R.string.game_notes_placeholder)) },
                 minLines = 3,
                 shape = RoundedCornerShape(12.dp),
             )
@@ -423,7 +433,7 @@ private fun StarRatingRow(rating: Int?, onRatingChange: (Int?) -> Unit) {
             val value = index + 1
             Icon(
                 imageVector = if (value <= current) Icons.Filled.Star else Icons.Outlined.Star,
-                contentDescription = "Rate $value",
+                contentDescription = stringResource(R.string.game_rate_star, value),
                 tint = if (value <= current) QuestlogTerracotta else QuestlogSoftBrown.copy(alpha = 0.3f),
                 modifier = Modifier
                     .size(32.dp)

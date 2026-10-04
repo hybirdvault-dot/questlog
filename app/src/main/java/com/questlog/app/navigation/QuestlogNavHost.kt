@@ -1,5 +1,6 @@
 package com.questlog.app.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -22,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavController
@@ -32,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.questlog.app.R
 import com.questlog.app.feature.capture.CaptureScreen
 import com.questlog.app.feature.discover.DiscoverScreen
 import com.questlog.app.feature.game.GameDetailScreen
@@ -41,7 +44,7 @@ import com.questlog.app.feature.stats.StatsScreen
 
 private data class BottomNavItem(
     val route: String,
-    val label: String,
+    @StringRes val labelRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
 )
@@ -49,19 +52,19 @@ private data class BottomNavItem(
 private val bottomNavItems = listOf(
     BottomNavItem(
         route = QuestlogRoute.Library.route,
-        label = "Library",
+        labelRes = R.string.nav_library,
         selectedIcon = Icons.Filled.LibraryBooks,
         unselectedIcon = Icons.Outlined.LibraryBooks,
     ),
     BottomNavItem(
         route = QuestlogRoute.Discover.route,
-        label = "Discover",
+        labelRes = R.string.nav_discover,
         selectedIcon = Icons.Filled.AutoAwesome,
         unselectedIcon = Icons.Outlined.AutoAwesome,
     ),
     BottomNavItem(
         route = QuestlogRoute.Stats.route,
-        label = "Stats",
+        labelRes = R.string.nav_stats,
         selectedIcon = Icons.Filled.PieChart,
         unselectedIcon = Icons.Outlined.PieChart,
     ),
@@ -100,10 +103,10 @@ fun QuestlogApp(shareEventBus: ShareEventBus) {
                             icon = {
                                 Icon(
                                     imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                    contentDescription = item.label,
+                                    contentDescription = stringResource(item.labelRes),
                                 )
                             },
-                            label = { Text(item.label) },
+                            label = { Text(stringResource(item.labelRes)) },
                         )
                     }
                 }

@@ -1,4 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
     <string name="app_name">Questlog</string>
+
+    <!-- Navigation -->
+    <string name="nav_library">Library</string>
+    <string name="nav_discover">Discover</string>
+    <string name="nav_clock_in">Clock In</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Generic actions -->
+    <string name="action_add_game">Add a game</string>
+    <string name="action_search_manually">Search Manually</string>
+    <string name="action_try_again">Try again</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_back">Back</string>
+    <string name="action_more">More</string>
+    <string name="action_share">Share</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_add_to_library">Add to library</string>
+    <string name="action_brag">Brag about it</string>
+    <string name="action_clock_in">Clock in</string>
+
+    <!-- Status labels -->
+    <string name="filter_all">All</string>
+    <string name="status_want">Want</string>
+    <string name="status_want_to_play">Want to Play</string>
+    <string name="status_playing">Playing</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_completed_short">Done</string>
+    <string name="status_dropped">Dropped</string>
+
+    <!-- Library -->
+    <string name="empty_library_title">Your library is waiting</string>
+    <string name="empty_library_cta">Capture your first game</string>
+    <string name="error_generic">Something went wrong</string>
+    <plurals name="library_game_count">
+        <item quantity="one">%1$d game</item>
+        <item quantity="other">%1$d games</item>
+    </plurals>
+
+    <!-- Discover -->
+    <string name="discover_search_placeholder">Search games</string>
+    <string name="discover_idle_title">Find your next game</string>
+    <string name="discover_idle_subtitle">Search by title to add it to your library.</string>
+    <string name="discover_empty_title">No games found</string>
+    <string name="discover_empty_subtitle">Try a different search term.</string>
+    <string name="discover_error_title">Search failed</string>
+    <string name="discover_added_to_library">Added to your library</string>
+
+    <!-- Game detail -->
+    <string name="game_detail_title">Game Detail</string>
+    <string name="game_not_found">Game not found</string>
+    <string name="game_about">About</string>
+    <string name="game_status_section">Status</string>
+    <string name="game_your_rating">Your Rating</string>
+    <string name="game_notes_label">Notes</string>
+    <string name="game_notes_placeholder">Add your thoughts about this game…</string>
+    <string name="game_rating">RAWG: %1$s/5</string>
+    <string name="value_unavailable">N/A</string>
+    <string name="game_rate_star">Rate %1$d</string>
+    <string name="delete_game_title">Delete Game?</string>
+    <string name="delete_game_message">This will permanently remove this game from your library. This cannot be undone.</string>
+
+    <!-- Capture -->
+    <string name="capture_title">Capture</string>
+    <string name="capture_idle_title">Add a game</string>
+    <string name="capture_idle_subtitle">Share a screenshot or link from another app, or search manually.</string>
+    <string name="capture_candidates_title">Possible matches — tap to confirm</string>
+    <string name="capture_match_found">We found a match</string>
+    <string name="capture_match_found_possible">We found a possible match</string>
+    <string name="ocr_scanning">Finding your game…</string>
+    <string name="ocr_no_match">Hmm, couldn\'t read that. Try another shot?</string>
+
+    <!-- Proof / wallet (locked copy) -->
+    <string name="proof_cta">Verify this achievement</string>
+    <string name="proof_fail">Can\'t reach Solana right now. Retry?</string>
+    <string name="proof_success">Verified on-chain. That\'s permanent.</string>
+    <string name="wallet_ready">Wallet ready</string>
+    <string name="streak_flamekeeper">Flamekeeper — %1$d days</string>
+
+    <!-- Settings -->
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_subtitle">Follows system setting</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_questlog">About Questlog</string>
+    <string name="settings_version">Version 1.0.0</string>
+    <string name="settings_rate">Rate on Play Store</string>
+    <string name="settings_rate_subtitle">Help us grow</string>
+    <string name="settings_data">Data</string>
+    <string name="settings_delete_all">Delete all data</string>
+    <string name="settings_delete_all_subtitle">Remove all games and settings</string>
+    <string name="settings_footer">Made with care by the Questlog team</string>
+    <string name="delete_all_title">Delete all data?</string>
+    <string name="delete_all_message">This will permanently remove all your games, ratings, and notes. This cannot be undone.</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Your Gaming Story</string>
+    <string name="stats_empty_title">Your gaming story starts here</string>
+    <string name="stats_empty_subtitle">Save some games and mark them complete.</string>
+    <string name="stats_total_games">games in your collection</string>
+    <string name="stats_completion_rate">Completion Rate</string>
+    <string name="stats_percent">%</string>
+    <string name="stats_completed_of_total">%1$d of %2$d completed</string>
+    <string name="stats_by_status">By Status</string>
+    <string name="pro_badge">PRO</string>
 </resources>

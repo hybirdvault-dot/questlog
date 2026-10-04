@@ -41,9 +41,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.questlog.app.R
 import com.questlog.app.core.model.GameStatus
 import com.questlog.app.ui.designsystem.QuestlogEmptyState
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
@@ -51,11 +54,11 @@ import com.questlog.app.ui.designsystem.QuestlogSpacing
 import com.questlog.app.ui.designsystem.QuestlogTerracotta
 
 private val libraryFilters = listOf(
-    null to "All",
-    GameStatus.PLAYING to "Playing",
-    GameStatus.WANT to "Want",
-    GameStatus.COMPLETED to "Done",
-    GameStatus.DROPPED to "Dropped",
+    null to R.string.filter_all,
+    GameStatus.PLAYING to R.string.status_playing,
+    GameStatus.WANT to R.string.status_want,
+    GameStatus.COMPLETED to R.string.status_completed_short,
+    GameStatus.DROPPED to R.string.status_dropped,
 )
 
 @Composable
@@ -74,7 +77,7 @@ fun LibraryScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Questlog",
+                        text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 },
@@ -82,7 +85,7 @@ fun LibraryScreen(
                     IconButton(onClick = onSettingsClick) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.nav_settings),
                         )
                     }
                 },
@@ -95,7 +98,10 @@ fun LibraryScreen(
                 containerColor = QuestlogTerracotta,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
             ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add game")
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.action_add_game),
+                )
             }
         },
     ) { innerPadding ->
@@ -111,14 +117,14 @@ fun LibraryScreen(
                     .padding(horizontal = QuestlogSpacing.L, vertical = QuestlogSpacing.S),
                 horizontalArrangement = Arrangement.spacedBy(QuestlogSpacing.S),
             ) {
-                libraryFilters.forEachIndexed { _, (status, label) ->
+                libraryFilters.forEachIndexed { _, (status, labelRes) ->
                     val isSelected = status == uiState.selectedStatus
                     FilterChip(
                         selected = isSelected,
                         onClick = { viewModel.selectStatus(status) },
                         label = {
                             Text(
-                                text = label,
+                                text = stringResource(labelRes),
                                 style = MaterialTheme.typography.labelMedium,
                             )
                         },
@@ -132,7 +138,7 @@ fun LibraryScreen(
 
             when {
                 uiState.errorMessage != null -> CenteredMessage(
-                    title = "Something went wrong",
+                    title = stringResource(R.string.error_generic),
                     subtitle = uiState.errorMessage!!,
                 )
 
@@ -144,14 +150,19 @@ fun LibraryScreen(
                 }
 
                 uiState.games.isEmpty() -> CenteredMessage(
-                    title = "Your library is empty",
-                    subtitle = "Tap + to discover and add games to your collection.",
+                    title = stringResource(R.string.empty_library_title),
+                    actionText = stringResource(R.string.empty_library_cta),
+                    onAction = onCaptureClick,
                 )
 
                 else -> {
                     // Game count
                     Text(
-                        text = "${uiState.games.size} game${if (uiState.games.size != 1) "s" else ""}",
+                        text = pluralStringResource(
+                            R.plurals.library_game_count,
+                            uiState.games.size,
+                            uiState.games.size,
+                        ),
                         style = MaterialTheme.typography.labelMedium,
                         color = QuestlogSoftBrown,
                         modifier = Modifier.padding(horizontal = QuestlogSpacing.L, vertical = QuestlogSpacing.Xs),
@@ -182,11 +193,25 @@ fun LibraryScreen(
 }
 
 @Composable
-private fun CenteredMessage(title: String, subtitle: String) {
+private fun CenteredMessage(
+    title: String,
+    subtitle: String = "",
+    actionText: String = "",
+    onAction: (() -> Unit)? = null,
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        QuestlogEmptyState(title = title, subtitle = subtitle)
+        if (onAction != null) {
+            QuestlogEmptyState(
+                title = title,
+                subtitle = subtitle,
+                actionText = actionText,
+                action = onAction,
+            )
+        } else {
+            QuestlogEmptyState(title = title, subtitle = subtitle)
+        }
     }
 }

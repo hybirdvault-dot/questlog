@@ -36,9 +36,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.questlog.app.R
 import com.questlog.app.core.model.GameStatus
 import com.questlog.app.ui.designsystem.QuestlogEmptyState
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
@@ -59,12 +61,12 @@ fun StatsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Your Gaming Story") },
+                title = { Text(stringResource(R.string.stats_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.action_back),
                         )
                     }
                 },
@@ -85,13 +87,13 @@ fun StatsScreen(
                 }
 
                 uiState.errorMessage != null -> CenteredMessage(
-                    title = "Something went wrong",
+                    title = stringResource(R.string.error_generic),
                     subtitle = uiState.errorMessage.orEmpty(),
                 )
 
                 uiState.totalGames == 0 -> CenteredMessage(
-                    title = "Your gaming story starts here",
-                    subtitle = "Save some games and mark them complete.",
+                    title = stringResource(R.string.stats_empty_title),
+                    subtitle = stringResource(R.string.stats_empty_subtitle),
                 )
 
                 else -> StatsContent(uiState = uiState)
@@ -133,7 +135,7 @@ private fun StatsContent(uiState: StatsUiState) {
                         color = Color.White,
                     )
                     Text(
-                        text = "games in your collection",
+                        text = stringResource(R.string.stats_total_games),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.8f),
                     )
@@ -152,7 +154,7 @@ private fun StatsContent(uiState: StatsUiState) {
             ) {
                 Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                     Text(
-                        text = "Completion Rate",
+                        text = stringResource(R.string.stats_completion_rate),
                         style = MaterialTheme.typography.labelLarge,
                         color = QuestlogSoftBrown,
                     )
@@ -165,7 +167,7 @@ private fun StatsContent(uiState: StatsUiState) {
                             style = MaterialTheme.typography.displayLarge,
                         )
                         Text(
-                            text = "%",
+                            text = stringResource(R.string.stats_percent),
                             style = MaterialTheme.typography.headlineMedium,
                             color = QuestlogSoftBrown,
                             modifier = Modifier.padding(bottom = QuestlogSpacing.S),
@@ -178,7 +180,11 @@ private fun StatsContent(uiState: StatsUiState) {
                     )
                     Spacer(modifier = Modifier.height(QuestlogSpacing.Xs))
                     Text(
-                        text = "${uiState.completedGames} of ${uiState.totalGames} completed",
+                        text = stringResource(
+                            R.string.stats_completed_of_total,
+                            uiState.completedGames,
+                            uiState.totalGames,
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = QuestlogSoftBrown,
                     )
@@ -197,7 +203,7 @@ private fun StatsContent(uiState: StatsUiState) {
             ) {
                 Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                     Text(
-                        text = "By Status",
+                        text = stringResource(R.string.stats_by_status),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(modifier = Modifier.height(QuestlogSpacing.M))
@@ -233,7 +239,7 @@ private fun StatusRow(status: GameStatus, count: Int, fraction: Float) {
                     .background(status.dotColor),
             )
             Text(
-                text = status.label,
+                text = status.label(),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .weight(1f)
@@ -270,10 +276,10 @@ private val GameStatus.dotColor: Color
         GameStatus.DROPPED -> QuestlogSoftBrown
     }
 
-private val GameStatus.label: String
-    get() = when (this) {
-        GameStatus.WANT -> "Want to Play"
-        GameStatus.PLAYING -> "Playing"
-        GameStatus.COMPLETED -> "Completed"
-        GameStatus.DROPPED -> "Dropped"
-    }
+@Composable
+private fun GameStatus.label(): String = when (this) {
+    GameStatus.WANT -> stringResource(R.string.status_want_to_play)
+    GameStatus.PLAYING -> stringResource(R.string.status_playing)
+    GameStatus.COMPLETED -> stringResource(R.string.status_completed)
+    GameStatus.DROPPED -> stringResource(R.string.status_dropped)
+}

@@ -31,21 +31,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.questlog.app.R
 import com.questlog.app.core.model.GameStatus
 
 @Composable
 fun QuestlogStatusChip(status: GameStatus) {
-    val (label, color) = when (status) {
-        GameStatus.WANT -> "Want to Play" to QuestlogTerracotta
-        GameStatus.PLAYING -> "Playing" to QuestlogTerracotta
-        GameStatus.COMPLETED -> "Completed" to QuestlogSage
-        GameStatus.DROPPED -> "Dropped" to QuestlogSoftBrown
+    val label = when (status) {
+        GameStatus.WANT -> stringResource(R.string.status_want_to_play)
+        GameStatus.PLAYING -> stringResource(R.string.status_playing)
+        GameStatus.COMPLETED -> stringResource(R.string.status_completed)
+        GameStatus.DROPPED -> stringResource(R.string.status_dropped)
+    }
+    val color = when (status) {
+        GameStatus.WANT -> QuestlogTerracotta
+        GameStatus.PLAYING -> QuestlogTerracotta
+        GameStatus.COMPLETED -> QuestlogSage
+        GameStatus.DROPPED -> QuestlogSoftBrown
     }
 
     Surface(
@@ -105,9 +113,9 @@ fun QuestlogSecondaryButton(onClick: () -> Unit, text: String) {
 @Composable
 fun QuestlogEmptyState(
     title: String,
-    subtitle: String,
+    subtitle: String = "",
     icon: ImageVector = Icons.Filled.Gamepad,
-    actionText: String = "Add a game",
+    actionText: String? = null,
     action: (() -> Unit)? = null,
 ) {
     Column(
@@ -149,7 +157,7 @@ fun QuestlogEmptyState(
             Spacer(modifier = Modifier.height(QuestlogSpacing.L))
             QuestlogPrimaryButton(
                 onClick = action,
-                text = actionText,
+                text = actionText ?: stringResource(R.string.action_add_game),
             )
         }
     }
@@ -164,7 +172,7 @@ fun QuestlogProBadge() {
             .padding(horizontal = QuestlogSpacing.S, vertical = QuestlogSpacing.Xs),
     ) {
         Text(
-            text = "PRO",
+            text = stringResource(R.string.pro_badge),
             style = MaterialTheme.typography.labelSmall,
             color = Color.White,
         )

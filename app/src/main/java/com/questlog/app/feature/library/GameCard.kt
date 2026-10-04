@@ -25,12 +25,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.questlog.app.R
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GameStatus
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
@@ -71,7 +73,7 @@ fun GameCard(game: Game, onClick: () -> Unit) {
                     modifier = Modifier.align(Alignment.TopEnd),
                 ) {
                     Text(
-                        text = game.status.shortLabel,
+                        text = game.status.shortLabel(),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White,
                         modifier = Modifier.padding(
@@ -124,10 +126,10 @@ fun GameCard(game: Game, onClick: () -> Unit) {
     }
 }
 
-private val GameStatus.shortLabel: String
-    get() = when (this) {
-        GameStatus.WANT -> "Want"
-        GameStatus.PLAYING -> "Playing"
-        GameStatus.COMPLETED -> "Done"
-        GameStatus.DROPPED -> "Dropped"
-    }
+@Composable
+private fun GameStatus.shortLabel(): String = when (this) {
+    GameStatus.WANT -> stringResource(R.string.status_want)
+    GameStatus.PLAYING -> stringResource(R.string.status_playing)
+    GameStatus.COMPLETED -> stringResource(R.string.status_completed_short)
+    GameStatus.DROPPED -> stringResource(R.string.status_dropped)
+}

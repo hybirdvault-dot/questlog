@@ -17,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.questlog.app.R
 import com.questlog.app.core.model.Game
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
@@ -61,7 +63,7 @@ fun CaptureResultCard(
 
             Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                 Text(
-                    text = "We found a possible match",
+                    text = stringResource(R.string.capture_match_found_possible),
                     style = MaterialTheme.typography.labelMedium,
                     color = QuestlogTerracotta,
                 )
@@ -87,7 +89,10 @@ fun CaptureResultCard(
 
                 game.rawgRating?.let { rating ->
                     Text(
-                        text = "RAWG: ${String.format(Locale.US, "%.1f", rating)}/5",
+                        text = stringResource(
+                            R.string.game_rating,
+                            String.format(Locale.US, "%.1f", rating),
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = QuestlogSpacing.Xs),
                     )
@@ -110,9 +115,15 @@ fun CaptureResultCard(
                 Spacer(modifier = Modifier.height(QuestlogSpacing.L))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    QuestlogPrimaryButton(onClick = onSave, text = "Save to Library")
+                    QuestlogPrimaryButton(
+                        onClick = onSave,
+                        text = stringResource(R.string.action_add_to_library),
+                    )
                     Spacer(modifier = Modifier.padding(horizontal = QuestlogSpacing.Xs))
-                    QuestlogSecondaryButton(onClick = onShare, text = "Share Card")
+                    QuestlogSecondaryButton(
+                        onClick = onShare,
+                        text = stringResource(R.string.action_brag),
+                    )
                 }
             }
         }

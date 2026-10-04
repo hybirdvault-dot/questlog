@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.questlog.app.R
 import com.questlog.app.core.model.Game
 import com.questlog.app.core.model.GamePreview
 import com.questlog.app.ui.designsystem.QuestlogGameImage
@@ -80,12 +82,12 @@ fun CaptureScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Capture") },
+                title = { Text(stringResource(R.string.capture_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.action_back),
                         )
                     }
                 },
@@ -152,13 +154,13 @@ private fun CaptureIdleContent(onSearchManually: () -> Unit) {
         Spacer(modifier = Modifier.height(QuestlogSpacing.L))
 
         Text(
-            text = "Add a game",
+            text = stringResource(R.string.capture_idle_title),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
         )
 
         Text(
-            text = "Share a screenshot or link from another app, or search manually.",
+            text = stringResource(R.string.capture_idle_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = QuestlogSoftBrown,
             textAlign = TextAlign.Center,
@@ -169,7 +171,7 @@ private fun CaptureIdleContent(onSearchManually: () -> Unit) {
 
         QuestlogPrimaryButton(
             onClick = onSearchManually,
-            text = "Search Manually",
+            text = stringResource(R.string.action_search_manually),
         )
     }
 }
@@ -187,7 +189,7 @@ private fun CaptureLoadingContent() {
             strokeWidth = 4.dp,
         )
         Text(
-            text = "Looking for games...",
+            text = stringResource(R.string.ocr_scanning),
             style = MaterialTheme.typography.bodyMedium,
             color = QuestlogSoftBrown,
             modifier = Modifier.padding(top = QuestlogSpacing.L),
@@ -206,7 +208,7 @@ private fun CandidatesContent(
             .padding(horizontal = QuestlogSpacing.L),
     ) {
         Text(
-            text = "Possible matches — tap to confirm",
+            text = stringResource(R.string.capture_candidates_title),
             style = MaterialTheme.typography.labelLarge,
             color = QuestlogTerracotta,
             modifier = Modifier.padding(vertical = QuestlogSpacing.M),
@@ -259,7 +261,7 @@ private fun CaptureResultContent(
 
                 Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
                     Text(
-                        text = "We found a match",
+                        text = stringResource(R.string.capture_match_found),
                         style = MaterialTheme.typography.labelMedium,
                         color = QuestlogTerracotta,
                     )
@@ -285,7 +287,10 @@ private fun CaptureResultContent(
 
                     game.rawgRating?.let { rating ->
                         Text(
-                            text = "RAWG: ${String.format(Locale.US, "%.1f", rating)}/5",
+                            text = stringResource(
+                                R.string.game_rating,
+                                String.format(Locale.US, "%.1f", rating),
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = QuestlogSpacing.Xs),
                         )
@@ -303,9 +308,15 @@ private fun CaptureResultContent(
 
                     Spacer(modifier = Modifier.height(QuestlogSpacing.L))
 
-                    QuestlogPrimaryButton(onClick = onSave, text = "Save to Library")
+                    QuestlogPrimaryButton(
+                        onClick = onSave,
+                        text = stringResource(R.string.action_add_to_library),
+                    )
                     Spacer(modifier = Modifier.height(QuestlogSpacing.S))
-                    QuestlogSecondaryButton(onClick = onShare, text = "Share Card")
+                    QuestlogSecondaryButton(
+                        onClick = onShare,
+                        text = stringResource(R.string.action_brag),
+                    )
                 }
             }
         }
@@ -332,9 +343,15 @@ private fun CaptureErrorContent(
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(QuestlogSpacing.L))
-        QuestlogPrimaryButton(onClick = onRetry, text = "Try Again")
+        QuestlogPrimaryButton(
+            onClick = onRetry,
+            text = stringResource(R.string.action_try_again),
+        )
         Spacer(modifier = Modifier.height(QuestlogSpacing.S))
-        QuestlogSecondaryButton(onClick = onSearchManually, text = "Search Manually")
+        QuestlogSecondaryButton(
+            onClick = onSearchManually,
+            text = stringResource(R.string.action_search_manually),
+        )
     }
 }
 
