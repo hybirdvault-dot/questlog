@@ -126,6 +126,15 @@
     <string name="clockin_progress_title">Progress</string>
     <string name="clockin_verified">%1$d verified</string>
     <string name="clockin_view_all_stats">View all stats</string>
+    <string name="clockin_reminder_channel_name">Daily reminder</string>
+    <string name="clockin_reminder_title">Time to clock in</string>
+    <string name="clockin_reminder_text">Keep your streak alive</string>
+    <string name="clockin_reminder_prompt">Remind me to clock in?</string>
+    <string name="clockin_reminder_accept">Remind me</string>
+    <string name="clockin_reminder_decline">Not now</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_reminder">Daily reminder</string>
+    <string name="settings_reminder_subtitle">Every day at 8:00 PM</string>
     <string name="clockin_longest">Longest: %1$d</string>
     <string name="clockin_total">Total: %1$d</string>
     <plurals name="clockin_day_streak">

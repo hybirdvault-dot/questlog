@@ -58,6 +58,9 @@ class ClockInRepository @Inject constructor(
         )
     }
 
+    val lastCheckInEpochDay: Flow<Long?> =
+        context.clockInDataStore.data.map { it[LAST_CHECK_IN_EPOCH_DAY] }
+
     suspend fun checkIn(todayEpochDay: Long): CheckInResult {
         var result: CheckInResult = CheckInResult.AlreadyCheckedIn(0)
         context.clockInDataStore.edit { preferences ->

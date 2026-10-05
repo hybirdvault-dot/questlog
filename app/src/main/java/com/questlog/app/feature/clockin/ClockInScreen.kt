@@ -2,6 +2,11 @@
 
 package com.questlog.app.feature.clockin
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,11 +38,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.questlog.app.R
@@ -48,6 +55,7 @@ import com.questlog.app.data.repository.StreakTier
 import com.questlog.app.ui.designsystem.ConfettiOverlay
 import com.questlog.app.ui.designsystem.QuestlogPrimaryButton
 import com.questlog.app.ui.designsystem.QuestlogProgressIndicator
+import com.questlog.app.ui.designsystem.QuestlogSecondaryButton
 import com.questlog.app.ui.designsystem.QuestlogSage
 import com.questlog.app.ui.designsystem.QuestlogSoftBrown
 import com.questlog.app.ui.designsystem.QuestlogSpacing
@@ -61,8 +69,13 @@ fun ClockInScreen(
     viewModel: ClockInViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val showReminderPrompt by viewModel.showReminderPrompt.collectAsStateWithLifecycle()
     val confetti = rememberConfettiState()
     val view = LocalView.current
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { }
 
     LaunchedEffect(Unit) {
         viewModel.checkInResult.collect { result ->
@@ -108,8 +121,21 @@ fun ClockInScreen(
 
                 else -> ClockInContent(
                     uiState = uiState,
+                    reminderPromptVisible = showReminderPrompt,
                     onCheckIn = viewModel::checkIn,
                     onViewStats = onViewStats,
+                    onRemindMe = {
+                        viewModel.onReminderAccepted()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.POST_NOTIFICATIONS,
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    },
+                    onNotNow = viewModel::onReminderDeclined,
                 )
             }
 
@@ -121,8 +147,11 @@ fun ClockInScreen(
 @Composable
 private fun ClockInContent(
     uiState: ClockInUiState,
+    reminderPromptVisible: Boolean,
     onCheckIn: () -> Unit,
     onViewStats: () -> Unit,
+    onRemindMe: () -> Unit,
+    onNotNow: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -189,6 +218,11 @@ private fun ClockInContent(
             )
         }
 
+        if (reminderPromptVisible) {
+            Spacer(modifier = Modifier.height(QuestlogSpacing.L))
+            ReminderPrompt(onRemindMe = onRemindMe, onNotNow = onNotNow)
+        }
+
         Spacer(modifier = Modifier.height(QuestlogSpacing.Xl))
 
         ProgressSection(uiState = uiState)
@@ -205,6 +239,42 @@ private fun ClockInContent(
         )
 
         Spacer(modifier = Modifier.height(QuestlogSpacing.Xl))
+    }
+}
+
+@Composable
+private fun ReminderPrompt(onRemindMe: () -> Unit, onNotNow: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(QuestlogSpacing.L)) {
+            Text(
+                text = stringResource(R.string.clockin_reminder_prompt),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Spacer(modifier = Modifier.height(QuestlogSpacing.M))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(QuestlogSpacing.S),
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    QuestlogPrimaryButton(
+                        onClick = onRemindMe,
+                        text = stringResource(R.string.clockin_reminder_accept),
+                    )
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    QuestlogSecondaryButton(
+                        onClick = onNotNow,
+                        text = stringResource(R.string.clockin_reminder_decline),
+                    )
+                }
+            }
+        }
     }
 }
 

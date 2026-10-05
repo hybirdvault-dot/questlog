@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -81,6 +82,15 @@ fun SettingsScreen(
                     icon = Icons.Filled.Palette,
                     title = stringResource(R.string.settings_theme),
                     subtitle = stringResource(R.string.settings_theme_subtitle),
+                    onClick = {},
+                )
+            }
+
+            SettingsSection(title = stringResource(R.string.settings_notifications)) {
+                SettingsItem(
+                    icon = Icons.Filled.Notifications,
+                    title = stringResource(R.string.settings_reminder),
+                    subtitle = stringResource(R.string.settings_reminder_subtitle),
                     onClick = {},
                 )
             }

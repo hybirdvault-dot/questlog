@@ -6,6 +6,7 @@ import com.questlog.app.core.database.GameDao
 import com.questlog.app.core.model.GameStatus
 import com.questlog.app.data.repository.CheckInResult
 import com.questlog.app.data.repository.ClockInRepository
+import com.questlog.app.data.repository.ReminderPreferences
 import com.questlog.app.data.repository.StreakTier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -36,6 +37,7 @@ data class ClockInUiState(
 @HiltViewModel
 class ClockInViewModel @Inject constructor(
     private val clockInRepository: ClockInRepository,
+    private val reminderPreferences: ReminderPreferences,
     gameDao: GameDao,
 ) : ViewModel() {
 
@@ -80,5 +82,26 @@ class ClockInViewModel @Inject constructor(
 
     fun consumeCheckInResult() {
         _checkInResult.value = null
+    }
+
+    val showReminderPrompt: StateFlow<Boolean> = combine(
+        reminderPreferences.askedForReminder,
+        reminderPreferences.noNag,
+    ) { asked, noNag -> !asked && !noNag }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false,
+        )
+
+    fun onReminderAccepted() {
+        viewModelScope.launch { reminderPreferences.setAskedForReminder(true) }
+    }
+
+    fun onReminderDeclined() {
+        viewModelScope.launch {
+            reminderPreferences.setAskedForReminder(true)
+            reminderPreferences.setNoNag(true)
+        }
     }
 }

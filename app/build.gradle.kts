@@ -132,6 +132,11 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // --- WorkManager (daily Clock-In reminder) ---
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
     // --- Retrofit + Gson + OkHttp logging ---
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
