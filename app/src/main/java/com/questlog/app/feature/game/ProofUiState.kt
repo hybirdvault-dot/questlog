@@ -1,10 +1,11 @@
 package com.questlog.app.feature.game
 
 sealed class ProofUiState {
-    object Idle : ProofUiState()
-    object WalletNotConnected : ProofUiState()
-    data class Signing(val unsignedTransaction: ByteArray) : ProofUiState()
-    object Verifying : ProofUiState()
+    data object Idle : ProofUiState()
+    data object WalletNotConnected : ProofUiState()
+    data object Signing : ProofUiState()
+    data object Verifying : ProofUiState()
     data class Verified(val signature: String) : ProofUiState()
-    object Failed : ProofUiState()
+    data class SigningFailed(val reason: String) : ProofUiState()
+    data class VerificationFailed(val reason: String) : ProofUiState()
 }

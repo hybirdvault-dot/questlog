@@ -30,14 +30,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -79,10 +79,13 @@ fun CaptureScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pendingShare by viewModel.pendingShare.collectAsStateWithLifecycle()
+    val saveSucceeded by viewModel.saveSucceeded.collectAsStateWithLifecycle()
+    val alreadyInLibrary by viewModel.alreadyInLibrary.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val view = LocalView.current
     val confetti = rememberConfettiState()
-    var celebrate by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val alreadySavedMessage = stringResource(R.string.capture_already_in_library)
 
     LaunchedEffect(pendingShare) {
         if (pendingShare != null) {
@@ -96,12 +99,20 @@ fun CaptureScreen(
         }
     }
 
-    LaunchedEffect(celebrate) {
-        if (celebrate) {
+    LaunchedEffect(saveSucceeded) {
+        if (saveSucceeded) {
+            viewModel.consumeSaveResult()
             confetti.launch()
             Haptics.success(view)
             delay(750)
             onGameSaved()
+        }
+    }
+
+    LaunchedEffect(alreadyInLibrary) {
+        if (alreadyInLibrary) {
+            viewModel.consumeSaveResult()
+            snackbarHostState.showSnackbar(alreadySavedMessage)
         }
     }
 
@@ -119,6 +130,7 @@ fun CaptureScreen(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -137,10 +149,7 @@ fun CaptureScreen(
 
                 is CaptureUiState.Result -> CaptureResultContent(
                     game = state.game,
-                    onSave = {
-                        viewModel.saveGame(state.game)
-                        celebrate = true
-                    },
+                    onSave = { viewModel.saveGame(state.game) },
                     onShare = { onShare(state.game) },
                 )
 

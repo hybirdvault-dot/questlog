@@ -120,26 +120,13 @@ fun GameDetailScreen(
     var showMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(proofState) {
-        when (val state = proofState) {
-            is ProofUiState.Signing -> {
-                if (activity != null) {
-                    val signed = viewModel.mwaWalletClient.signTransaction(
-                        activity,
-                        state.unsignedTransaction,
-                    )
-                    if (signed == null) {
-                        Haptics.warning(view)
-                    }
-                    viewModel.onSigned(signed)
-                }
-            }
-
+        when (proofState) {
             is ProofUiState.Verified -> {
                 confetti.launch()
                 Haptics.success(view)
             }
 
-            ProofUiState.Failed -> Haptics.warning(view)
+            is ProofUiState.SigningFailed, is ProofUiState.VerificationFailed -> Haptics.warning(view)
 
             else -> Unit
         }
@@ -180,7 +167,7 @@ fun GameDetailScreen(
                                 onClick = {
                                     showMenu = false
                                     scope.launch {
-                                        val file = viewModel.shareCard(context)
+                                        val file = viewModel.shareCard(context) ?: return@launch
                                         val uri = FileProvider.getUriForFile(
                                             context,
                                             "${context.packageName}.fileprovider",
@@ -276,7 +263,7 @@ fun GameDetailScreen(
                     },
                     onRatingChange = viewModel::updateRating,
                     onNotesChange = viewModel::updateNotes,
-                    onVerify = viewModel::verify,
+                    onVerify = { activity?.let { viewModel.signAndVerify(it) } },
                     onOpenExplorer = openExplorer,
                 )
             }
@@ -580,7 +567,13 @@ private fun ProofCard(
 
             if (!verified) {
                 when (proofState) {
-                    is ProofUiState.Signing, ProofUiState.Verifying -> {
+                    ProofUiState.Signing, ProofUiState.Verifying -> {
+                        QuestlogPrimaryButton(
+                            onClick = onVerify,
+                            text = stringResource(R.string.proof_cta),
+                            enabled = false,
+                        )
+                        Spacer(modifier = Modifier.height(QuestlogSpacing.S))
                         Text(
                             text = stringResource(R.string.proof_verifying),
                             style = MaterialTheme.typography.bodyMedium,
@@ -588,9 +581,22 @@ private fun ProofCard(
                         )
                     }
 
-                    ProofUiState.Failed -> {
+                    is ProofUiState.SigningFailed -> {
                         Text(
-                            text = stringResource(R.string.proof_fail),
+                            text = proofState.reason,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                        Spacer(modifier = Modifier.height(QuestlogSpacing.S))
+                        QuestlogSecondaryButton(
+                            onClick = onVerify,
+                            text = stringResource(R.string.action_try_again),
+                        )
+                    }
+
+                    is ProofUiState.VerificationFailed -> {
+                        Text(
+                            text = proofState.reason,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error,
                         )

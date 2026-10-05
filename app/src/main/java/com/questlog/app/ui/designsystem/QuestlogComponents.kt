@@ -73,9 +73,10 @@ fun QuestlogStatusChip(status: GameStatus) {
 }
 
 @Composable
-fun QuestlogPrimaryButton(onClick: () -> Unit, text: String) {
+fun QuestlogPrimaryButton(onClick: () -> Unit, text: String, enabled: Boolean = true) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = QuestlogTerracotta,

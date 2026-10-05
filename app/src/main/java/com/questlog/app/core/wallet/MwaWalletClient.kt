@@ -13,6 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+sealed interface SignResult {
+    data class Signed(val signedTx: ByteArray) : SignResult
+    data object Rejected : SignResult
+    data object NoWallet : SignResult
+}
+
 @Singleton
 class MwaWalletClient @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
@@ -41,16 +47,18 @@ class MwaWalletClient @Inject constructor(
         }
     }
 
-    suspend fun signTransaction(activity: ComponentActivity, transaction: ByteArray): ByteArray? {
+    suspend fun signTransaction(activity: ComponentActivity, transaction: ByteArray): SignResult {
         val sender = ActivityResultSender(activity)
         val result = walletAdapter.transact(sender) {
             signTransactions(arrayOf(transaction))
         }
         val signed = result.successPayload?.signedPayloads?.firstOrNull()
         return when (result) {
-            is TransactionResult.Success<*> -> signed
-            is TransactionResult.NoWalletFound<*> -> null
-            is TransactionResult.Failure<*> -> null
+            is TransactionResult.Success<*> ->
+                signed?.let { SignResult.Signed(it) } ?: SignResult.Rejected
+
+            is TransactionResult.NoWalletFound<*> -> SignResult.NoWallet
+            is TransactionResult.Failure<*> -> SignResult.Rejected
         }
     }
 }

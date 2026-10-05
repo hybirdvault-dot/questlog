@@ -19,7 +19,6 @@ val localProperties = Properties().apply {
     }
 }
 val rawgApiKey: String = localProperties.getProperty("RAWG_API_KEY") ?: ""
-val oneSignalAppId: String = localProperties.getProperty("ONESIGNAL_APP_ID") ?: ""
 
 android {
     namespace = "com.questlog.app"
@@ -36,7 +35,6 @@ android {
 
         // API keys — read from local.properties, never hardcoded.
         buildConfigField("String", "RAWG_API_KEY", "\"$rawgApiKey\"")
-        buildConfigField("String", "ONESIGNAL_APP_ID", "\"$oneSignalAppId\"")
     }
 
     buildTypes {
@@ -146,9 +144,6 @@ dependencies {
 
     // --- ML Kit on-device text recognition ---
     implementation(libs.mlkit.text.recognition)
-
-    // --- OneSignal (push notifications) ---
-    implementation(libs.onesignal)
 
     // --- Solana (on-chain proof) ---
     implementation(libs.solana.web3.solana)

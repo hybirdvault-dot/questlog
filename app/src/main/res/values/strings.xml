@@ -71,6 +71,7 @@
     <string name="capture_candidates_title">Possible matches — tap to confirm</string>
     <string name="capture_match_found">We found a match</string>
     <string name="capture_match_found_possible">We found a possible match</string>
+    <string name="capture_already_in_library">Already in your library</string>
     <string name="ocr_scanning">Finding your game…</string>
     <string name="ocr_no_match">Hmm, couldn\'t read that. Try another shot?</string>
 

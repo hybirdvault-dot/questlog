@@ -102,10 +102,27 @@ class CaptureViewModel @Inject constructor(
         }
     }
 
+    private val _saveSucceeded = MutableStateFlow(false)
+    val saveSucceeded: StateFlow<Boolean> = _saveSucceeded.asStateFlow()
+
+    private val _alreadyInLibrary = MutableStateFlow(false)
+    val alreadyInLibrary: StateFlow<Boolean> = _alreadyInLibrary.asStateFlow()
+
     fun saveGame(game: Game) {
         viewModelScope.launch {
-            gameRepository.saveGame(game)
+            val existing = game.rawgId?.let { gameRepository.findByRawgId(it) }
+            if (existing == null) {
+                gameRepository.saveGame(game)
+                _saveSucceeded.value = true
+            } else {
+                _alreadyInLibrary.value = true
+            }
         }
+    }
+
+    fun consumeSaveResult() {
+        _saveSucceeded.value = false
+        _alreadyInLibrary.value = false
     }
 
     fun reset() {

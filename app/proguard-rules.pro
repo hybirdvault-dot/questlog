@@ -29,11 +29,18 @@
 -keep class javax.inject.** { *; }
 -keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }
 
-# --- OneSignal ---
--keep class com.onesignal.** { *; }
-
 # --- ML Kit ---
 -keep class com.google.mlkit.** { *; }
+
+# --- Solana / Mobile Wallet Adapter ---
+-keep class com.solanamobile.** { *; }
+-keep class com.solana.** { *; }
+-keep class com.funkatronics.** { *; }
+-keep class io.github.funkatronics.** { *; }
+-dontwarn com.solanamobile.**
+-dontwarn com.solana.**
+-dontwarn com.funkatronics.**
+-dontwarn io.github.funkatronics.**
 
 # --- Kotlin coroutines ---
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}

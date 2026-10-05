@@ -1,6 +1,7 @@
 package com.questlog.app.feature.game
 
 import android.content.Context
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.questlog.app.core.model.ProofStatus
 import com.questlog.app.core.model.WalletState
 import com.questlog.app.core.share.ShareCardRenderer
 import com.questlog.app.core.wallet.MwaWalletClient
+import com.questlog.app.core.wallet.SignResult
 import com.questlog.app.data.repository.GameRepository
 import com.questlog.app.data.repository.ProofOfPlayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
@@ -30,7 +33,7 @@ import kotlinx.datetime.Clock
 class GameDetailViewModel @Inject constructor(
     private val gameRepository: GameRepository,
     private val shareCardRenderer: ShareCardRenderer,
-    val mwaWalletClient: MwaWalletClient,
+    private val mwaWalletClient: MwaWalletClient,
     private val proofOfPlayRepository: ProofOfPlayRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -56,42 +59,84 @@ class GameDetailViewModel @Inject constructor(
     private val _proofState = MutableStateFlow<ProofUiState>(ProofUiState.Idle)
     val proofState: StateFlow<ProofUiState> = _proofState.asStateFlow()
 
-    fun verify() {
-        val game = uiState.value.game ?: return
-        val wallet = mwaWalletClient.state.value
-        if (wallet !is WalletState.Connected) {
-            _proofState.value = ProofUiState.WalletNotConnected
-            return
-        }
+    private val proofMutex = Mutex()
+
+    fun signAndVerify(activity: ComponentActivity) {
+        if (!proofMutex.tryLock()) return
         viewModelScope.launch {
-            proofOfPlayRepository.buildUnsignedTransaction(game, wallet.pubkey)
-                .onSuccess { _proofState.value = ProofUiState.Signing(it) }
-                .onFailure { _proofState.value = ProofUiState.Failed }
+            try {
+                val game = uiState.value.game ?: return@launch
+                val wallet = mwaWalletClient.state.value as? WalletState.Connected
+                if (wallet == null) {
+                    _proofState.value = ProofUiState.WalletNotConnected
+                    return@launch
+                }
+
+                gameRepository.updateProof(
+                    id = game.id,
+                    signature = null,
+                    proofAt = null,
+                    proofStatus = ProofStatus.PENDING,
+                    walletAddress = wallet.pubkey,
+                )
+                _proofState.value = ProofUiState.Signing
+
+                val unsigned = proofOfPlayRepository.buildUnsignedTransaction(game, wallet.pubkey)
+                    .getOrElse {
+                        persistFailed(game.id, wallet.pubkey)
+                        _proofState.value = ProofUiState.SigningFailed("Couldn't prepare the proof")
+                        return@launch
+                    }
+
+                when (val sign = mwaWalletClient.signTransaction(activity, unsigned)) {
+                    is SignResult.NoWallet -> {
+                        _proofState.value = ProofUiState.WalletNotConnected
+                    }
+
+                    is SignResult.Rejected -> {
+                        persistFailed(game.id, wallet.pubkey)
+                        _proofState.value = ProofUiState.SigningFailed("Wallet declined")
+                    }
+
+                    is SignResult.Signed -> {
+                        _proofState.value = ProofUiState.Verifying
+                        proofOfPlayRepository.submitProof(sign.signedTx)
+                            .onSuccess { signature ->
+                                gameRepository.updateProof(
+                                    id = game.id,
+                                    signature = signature,
+                                    proofAt = Clock.System.now(),
+                                    proofStatus = ProofStatus.CONFIRMED,
+                                    walletAddress = wallet.pubkey,
+                                )
+                                _proofState.value = ProofUiState.Verified(signature)
+                            }
+                            .onFailure {
+                                persistFailed(game.id, wallet.pubkey)
+                                _proofState.value = ProofUiState.VerificationFailed("Couldn't verify on-chain")
+                            }
+                    }
+                }
+            } catch (t: Throwable) {
+                uiState.value.game?.let { game ->
+                    val walletAddress = (mwaWalletClient.state.value as? WalletState.Connected)?.pubkey
+                    persistFailed(game.id, walletAddress)
+                }
+                _proofState.value = ProofUiState.VerificationFailed(t.message ?: "Verification failed")
+            } finally {
+                proofMutex.unlock()
+            }
         }
     }
 
-    fun onSigned(signedTransaction: ByteArray?) {
-        if (signedTransaction == null) {
-            _proofState.value = ProofUiState.Idle
-            return
-        }
-        val game = uiState.value.game ?: return
-        val wallet = mwaWalletClient.state.value as? WalletState.Connected
-        viewModelScope.launch {
-            _proofState.value = ProofUiState.Verifying
-            proofOfPlayRepository.submitProof(signedTransaction)
-                .onSuccess { signature ->
-                    gameRepository.updateProof(
-                        id = game.id,
-                        signature = signature,
-                        proofAt = Clock.System.now(),
-                        proofStatus = ProofStatus.CONFIRMED,
-                        walletAddress = wallet?.pubkey,
-                    )
-                    _proofState.value = ProofUiState.Verified(signature)
-                }
-                .onFailure { _proofState.value = ProofUiState.Failed }
-        }
+    private suspend fun persistFailed(gameId: String, walletAddress: String?) {
+        gameRepository.updateProof(
+            id = gameId,
+            signature = null,
+            proofAt = null,
+            proofStatus = ProofStatus.FAILED,
+            walletAddress = walletAddress,
+        )
     }
 
     fun updateStatus(status: GameStatus) {
@@ -134,8 +179,8 @@ class GameDetailViewModel @Inject constructor(
         }
     }
 
-    suspend fun shareCard(context: Context): File {
-        val game = requireNotNull(uiState.value.game) { "No game loaded" }
+    suspend fun shareCard(context: Context): File? {
+        val game = uiState.value.game ?: return null
         return withContext(Dispatchers.Default) {
             val bitmap = shareCardRenderer.renderGameCard(
                 game = game,

@@ -62,8 +62,8 @@ class ProofOfPlayRepository @Inject constructor(
 
     private suspend fun awaitConfirmation(signature: String) {
         val params = JSONArray().put(JSONArray().put(signature))
-        val deadline = System.currentTimeMillis() + CONFIRMATION_TIMEOUT_MS
-        while (System.currentTimeMillis() < deadline) {
+        val deadline = System.nanoTime() + CONFIRMATION_TIMEOUT_MS * 1_000_000L
+        while (System.nanoTime() < deadline) {
             val status = rpcObject("getSignatureStatuses", params)
                 .optJSONArray("value")
                 ?.optJSONObject(0)
