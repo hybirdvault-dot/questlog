@@ -2,6 +2,8 @@
 
 Questlog — Your verified gaming history. Save any game the moment you discover it, prove your completions on-chain. Letterboxd for gaming, built for Solana Mobile.
 
+**📲 Download the app:** [questlog-v1.0.0.apk](https://github.com/hybirdvault-dot/questlog/releases/download/v1.0.0/questlog-v1.0.0.apk) (signed release, Android 8.0+) — or see the [latest release](https://github.com/hybirdvault-dot/questlog/releases/latest). Install and open; no account needed, the wallet only appears if you want on-chain proof.
+
 ## The core loop
 
 1. See a game you like — screenshot it (or copy its link) in any app.
