@@ -62,9 +62,7 @@ class CaptureViewModel @Inject constructor(
             _uiState.value = CaptureUiState.Loading
             try {
                 val bitmap = withContext(Dispatchers.IO) {
-                    context.contentResolver.openInputStream(uri)?.use {
-                        BitmapFactory.decodeStream(it)
-                    }
+                    decodeSampled(context, uri, MAX_IMAGE_DIMENSION)
                 }
                 if (bitmap == null) {
                     _uiState.value = CaptureUiState.Error("Could not load image")
@@ -127,5 +125,24 @@ class CaptureViewModel @Inject constructor(
 
     fun reset() {
         _uiState.value = CaptureUiState.Idle
+    }
+
+    // Shared screenshots can be 12 MP+; decoding at full size OOMs on mid-range
+    // devices, so sample down to <= 2048 px before OCR.
+    private fun decodeSampled(context: Context, uri: Uri, maxDim: Int): android.graphics.Bitmap? {
+        val resolver = context.contentResolver
+        val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        resolver.openInputStream(uri)?.use { android.graphics.BitmapFactory.decodeStream(it, null, bounds) }
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+        var sample = 1
+        while (bounds.outWidth / (sample * 2) >= maxDim || bounds.outHeight / (sample * 2) >= maxDim) {
+            sample *= 2
+        }
+        val opts = android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
+        return resolver.openInputStream(uri)?.use { android.graphics.BitmapFactory.decodeStream(it, null, opts) }
+    }
+
+    private companion object {
+        const val MAX_IMAGE_DIMENSION = 2048
     }
 }

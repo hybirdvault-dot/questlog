@@ -40,6 +40,7 @@ data class StreakState(
 
 sealed class CheckInResult {
     data class CheckedIn(val newStreak: Int, val tier: StreakTier) : CheckInResult()
+    data class StreakReset(val newStreak: Int) : CheckInResult()
     data class AlreadyCheckedIn(val currentStreak: Int) : CheckInResult()
 }
 
@@ -69,8 +70,11 @@ class ClockInRepository @Inject constructor(
             val storedTotal = preferences[TOTAL_CHECK_INS] ?: 0
             val lastCheckInDay = preferences[LAST_CHECK_IN_EPOCH_DAY]
 
-            val newStreak = if (lastCheckInDay == null) {
-                1
+            val newStreak: Int
+            val isReset: Boolean
+            if (lastCheckInDay == null) {
+                newStreak = 1
+                isReset = false
             } else {
                 val gap = todayEpochDay - lastCheckInDay
                 when {
@@ -79,9 +83,15 @@ class ClockInRepository @Inject constructor(
                         return@edit
                     }
 
-                    gap == 1L -> storedStreak + 1
+                    gap == 1L -> {
+                        newStreak = storedStreak + 1
+                        isReset = false
+                    }
 
-                    gap >= 2L -> 1
+                    gap >= 2L -> {
+                        newStreak = 1
+                        isReset = storedStreak > 1
+                    }
 
                     else -> {
                         result = CheckInResult.AlreadyCheckedIn(storedStreak)
@@ -95,7 +105,11 @@ class ClockInRepository @Inject constructor(
             preferences[LONGEST_STREAK] = maxOf(storedLongest, newStreak)
             preferences[TOTAL_CHECK_INS] = storedTotal + 1
 
-            result = CheckInResult.CheckedIn(newStreak, StreakTier.forStreak(newStreak))
+            result = if (isReset) {
+                CheckInResult.StreakReset(newStreak)
+            } else {
+                CheckInResult.CheckedIn(newStreak, StreakTier.forStreak(newStreak))
+            }
         }
         return result
     }

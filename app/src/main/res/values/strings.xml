@@ -118,7 +118,7 @@
 
     <!-- Clock In (habit) -->
     <string name="clockin_tier_none">Getting started</string>
-    <string name="clockin_tier_warm">Warming up</string>
+    <string name="clockin_tier_warm">Warm</string>
     <string name="clockin_tier_flamekeeper">Flamekeeper</string>
     <string name="clockin_tier_inferno">Inferno</string>
     <string name="clockin_tier_legend">Legend</string>
