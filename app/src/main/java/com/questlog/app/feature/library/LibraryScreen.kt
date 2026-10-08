@@ -19,10 +19,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -38,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -63,6 +67,7 @@ private val libraryFilters = listOf(
 fun LibraryScreen(
     onGameClick: (String) -> Unit,
     onCaptureClick: () -> Unit,
+    onScanClick: () -> Unit,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -77,6 +82,22 @@ fun LibraryScreen(
                         text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.headlineMedium,
                     )
+                },
+                actions = {
+                    Button(
+                        onClick = onScanClick,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = QuestlogTerracotta,
+                            contentColor = Color.White,
+                        ),
+                        modifier = Modifier.padding(end = QuestlogSpacing.M),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.action_scan_game),
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior,
             )
@@ -140,8 +161,8 @@ fun LibraryScreen(
 
                 uiState.games.isEmpty() -> CenteredMessage(
                     title = stringResource(R.string.empty_library_title),
-                    actionText = stringResource(R.string.empty_library_cta),
-                    onAction = onCaptureClick,
+                    actionText = stringResource(R.string.action_scan_game),
+                    onAction = onScanClick,
                 )
 
                 else -> {

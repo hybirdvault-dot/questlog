@@ -150,6 +150,12 @@ dependencies {
     // --- ML Kit on-device text recognition ---
     implementation(libs.mlkit.text.recognition)
 
+    // --- CameraX (in-app scanner) ---
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
     // --- Solana (on-chain proof) ---
     implementation(libs.solana.web3.solana)
     implementation(libs.solana.rpc.core)

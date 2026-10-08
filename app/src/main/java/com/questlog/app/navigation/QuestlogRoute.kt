@@ -4,6 +4,7 @@ sealed class QuestlogRoute(val route: String) {
     object Library : QuestlogRoute("library")
     object Discover : QuestlogRoute("discover")
     object Capture : QuestlogRoute("capture")
+    object Scan : QuestlogRoute("scan")
     object CaptureResult : QuestlogRoute("capture/result")
 
     data class GameDetail(val gameId: String) : QuestlogRoute("game/$gameId") {

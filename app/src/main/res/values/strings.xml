@@ -75,6 +75,18 @@
     <string name="ocr_scanning">Finding your game…</string>
     <string name="ocr_no_match">Hmm, couldn\'t read that. Try another shot?</string>
 
+    <!-- Scan (in-app camera) -->
+    <string name="action_scan_game">Scan a game</string>
+    <string name="scan_title">Scan a game</string>
+    <string name="scan_hint">Point at a game cover or title</string>
+    <string name="scan_searching">Looking for a game…</string>
+    <string name="scan_found">Found: %1$s</string>
+    <string name="scan_confirm">That\'s the one</string>
+    <string name="scan_permission_title">Camera access needed</string>
+    <string name="scan_permission_subtitle">Questlog needs your camera to read game titles. You can still add games by sharing from another app.</string>
+    <string name="scan_permission_grant">Allow camera</string>
+    <string name="scan_permission_settings">Open Settings</string>
+
     <!-- Proof / wallet (locked copy) -->
     <string name="proof_cta">Verify this achievement</string>
     <string name="proof_fail">Can\'t reach Solana right now. Retry?</string>

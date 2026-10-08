@@ -31,6 +31,9 @@ okhttp = "4.12.0"
 coroutines = "1.9.0"
 kotlinxDatetime = "0.6.1"
 
+# --- CameraX (in-app scanner) ---
+androidxCamera = "1.4.1"
+
 # --- Third-party SDKs ---
 coil = "3.0.4"
 mlkitText = "16.0.1"
@@ -104,6 +107,12 @@ okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-i
 # --- Image loading (Coil 3 uses the io.coil-kt.coil3 group) ---
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+
+# --- CameraX (in-app scanner) ---
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "androidxCamera" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "androidxCamera" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "androidxCamera" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "androidxCamera" }
 
 # --- ML Kit ---
 mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitText" }

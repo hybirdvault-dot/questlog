@@ -42,6 +42,7 @@ import com.questlog.app.feature.clockin.ClockInScreen
 import com.questlog.app.feature.discover.DiscoverScreen
 import com.questlog.app.feature.game.GameDetailScreen
 import com.questlog.app.feature.library.LibraryScreen
+import com.questlog.app.feature.scan.ScanScreen
 import com.questlog.app.feature.settings.SettingsScreen
 import com.questlog.app.feature.stats.StatsScreen
 
@@ -168,6 +169,7 @@ fun QuestlogNavHost(
             LibraryScreen(
                 onGameClick = { gameId -> navController.navigate("game/$gameId") },
                 onCaptureClick = { navController.navigate(QuestlogRoute.Capture.route) },
+                onScanClick = { navController.navigate(QuestlogRoute.Scan.route) },
             )
         }
 
@@ -191,6 +193,18 @@ fun QuestlogNavHost(
                 },
                 onShare = { game ->
                     // Share intent handled within the screen
+                },
+            )
+        }
+
+        composable(QuestlogRoute.Scan.route) {
+            ScanScreen(
+                onBack = { navController.popBackStack() },
+                onConfirmed = {
+                    navController.navigate(QuestlogRoute.Capture.route) {
+                        popUpTo(QuestlogRoute.Scan.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 },
             )
         }
