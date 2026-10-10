@@ -225,6 +225,13 @@ private fun ClockInContent(
 
         Spacer(modifier = Modifier.height(QuestlogSpacing.Xl))
 
+        CheckInCalendar(
+            checkInDays = uiState.checkInDays,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(QuestlogSpacing.Xl))
+
         ProgressSection(uiState = uiState)
 
         Spacer(modifier = Modifier.height(QuestlogSpacing.M))

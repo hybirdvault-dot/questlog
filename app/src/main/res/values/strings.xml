@@ -129,6 +129,8 @@
     <string name="pro_badge">PRO</string>
 
     <!-- Clock In (habit) -->
+    <string name="calendar_title">Your history</string>
+    <string name="calendar_today">Today</string>
     <string name="clockin_tier_none">Getting started</string>
     <string name="clockin_tier_warm">Warm</string>
     <string name="clockin_tier_flamekeeper">Flamekeeper</string>

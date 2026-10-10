@@ -28,6 +28,7 @@ data class ClockInUiState(
     val longestStreak: Int = 0,
     val totalCheckIns: Int = 0,
     val tier: StreakTier = StreakTier.NONE,
+    val checkInDays: Set<Long> = emptySet(),
     val gamesByStatus: Map<GameStatus, Int> = emptyMap(),
     val totalGames: Int = 0,
     val verifiedCompletions: Int = 0,
@@ -43,15 +44,17 @@ class ClockInViewModel @Inject constructor(
 
     val uiState: StateFlow<ClockInUiState> = combine(
         clockInRepository.streakState,
+        clockInRepository.checkInDays,
         gameDao.countByStatus(),
         gameDao.observeVerifiedCompletions(),
-    ) { streak, counts, verified ->
+    ) { streak, checkInDays, counts, verified ->
         ClockInUiState(
             isLoading = false,
             currentStreak = streak.current,
             longestStreak = streak.longest,
             totalCheckIns = streak.total,
             tier = streak.tier,
+            checkInDays = checkInDays,
             gamesByStatus = counts.associate { it.status to it.count },
             totalGames = counts.sumOf { it.count },
             verifiedCompletions = verified.size,

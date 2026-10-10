@@ -156,6 +156,9 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
 
+    // --- Calendar (Clock In history) ---
+    implementation(libs.kizitonwose.calendar.compose)
+
     // --- Solana (on-chain proof) ---
     implementation(libs.solana.web3.solana)
     implementation(libs.solana.rpc.core)
