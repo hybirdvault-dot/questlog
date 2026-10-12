@@ -98,10 +98,12 @@ Full developer briefing (architecture, 7 laws, dependency traps, roadmap): **[HA
 
 ## Screenshots
 
-![Library](screenshots/01-library.png)
-![Scan a game](screenshots/02-scan.png)
-![Verified on Solana](screenshots/03-verified.png)
-![Clock In streak](screenshots/04-clockin.png)
+| | | |
+|---|---|---|
+| ![1](screenshots/app-screenshot-1.jpg) | ![2](screenshots/app-screenshot-2.jpg) | ![3](screenshots/app-screenshot-3.jpg) |
+| ![4](screenshots/app-screenshot-4.jpg) | ![5](screenshots/app-screenshot-5.jpg) | ![6](screenshots/app-screenshot-6.jpg) |
+
+**🎬 60-second demo video:** [questlog-demo.mp4](questlog-demo.mp4) — capture → library → complete → on-chain proof → daily streak.
 
 ## Roadmap (deliberately deferred)
 
