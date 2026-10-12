@@ -67,16 +67,9 @@
 
 **DO NOT build** (deleted by design, answer with: *"the chain IS auth/audit/integrity — we deleted those systems on purpose"*): accounts/2FA/passwords · payments · admin panel · multi-tenancy · SSR/SEO · webhooks · analytics SDKs (Honesty Lock) · dark-default theme (cream IS the differentiator).
 
-## 6. JUDGING GAME (how the 25%×4 is won)
+## 6. SUBMISSION
 
-| Criterion | Our weapon | Demo timestamp |
-|---|---|---|
-| Stickiness | Clock In + streak tiers + calendar + reminder | 0:40–0:55 |
-| UX | Walletless cozy flow, zero jargon, haptics, confetti, friendly failures | every second |
-| Innovation | Screenshot/scan → on-chain Proof of Play (open memo format) | 0:25–0:40 |
-| Presentation | 60s honest script, real device, real TX | whole video |
-
-Golden rules: no fabricated numbers (Honesty Lock — a single invented stat loses the room) · every claim on camera must be real behavior · the explorer link must actually open during the video · fee copy = "under a cent on Solana", never SOL amounts.
+Submission copy, demo script and judging strategy are kept private with the owner — not in this repo.
 
 ## 7. ENV & SECRETS
 
