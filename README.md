@@ -50,8 +50,8 @@ A verified completion is a Solana transaction carrying a single Memo v2 instruct
 
 ## Screenshots
 
-> _Placeholder — add capture/verify/Clock In screenshots here._
+Screenshots from the live build are in the [release notes](https://github.com/hybirdvault-dot/questlog/releases) — Library, game detail with verified badge, Clock In streak, and the share card.
 
-## Roadmap
+## Roadmap (deliberately deferred)
 
 Pro tier is a v2 roadmap item.
