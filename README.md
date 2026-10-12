@@ -36,22 +36,77 @@ A verified completion is a Solana transaction carrying a single Memo v2 instruct
 | Innovation | The screenshot → OCR → on-chain Proof-of-Play pipeline turns an everyday screenshot into a verifiable achievement. |
 | Presentation | A tight, honest 60-second demo — capture a game, complete it, verify it. |
 
-## How to run
+## How to use it (install & play)
 
-1. Put a RAWG API key in `local.properties` at the repo root:
-   ```properties
-   RAWG_API_KEY=your_rawg_api_key_here
-   ```
-2. Use JDK 17 (`export JAVA_HOME=/path/to/jdk-17`).
-3. Build:
-   ```
-   ./gradlew assembleDebug
-   ```
+1. **Get the app:** download [`questlog-v1.1.0.apk`](https://github.com/hybirdvault-dot/questlog/releases/download/v1.1.0/questlog-v1.1.0.apk) on your Android phone (8.0+).
+2. **Install:** open the file → allow "install from unknown sources" if asked. No account, no sign-up.
+3. **Add your first game** three ways:
+   - **Scan:** tap "Scan a game" → point your camera at a game title/poster
+   - **Share:** screenshot any game in TikTok/YouTube → share → Questlog
+   - **Search:** Discover tab → type a title
+4. **Build your collection:** set status (Want/Playing/Completed/Dropped), rate 1–5 stars, add notes. Free and unlimited — no wallet needed.
+5. **Prove a completion:** open a Completed game → tap **"Verify this achievement"** → Phantom signs → your achievement is permanent on Solana → "✓ Verified on Solana" badge + a real explorer link.
+6. **Stay consistent:** Clock In tab → tap **Clock in** every day → grow your streak (Warm → Flamekeeper → Inferno → Legend) and watch the calendar fill with your history.
+
+## APIs used
+
+| API / service | What it powers | Key | Docs |
+|---|---|---|---|
+| **RAWG Video Games API** | All game data: search, covers, release years, platforms, ratings, descriptions | free key ([rawg.io/apidocs](https://rawg.io/apidocs)) → `local.properties` | [RAWG docs](https://rawg.io/apidocs) |
+| **Solana (devnet)** | Proof of Play: memo transactions via the Memo v2 program (`MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr`) | none (public RPC `https://api.devnet.solana.com`) | [Solana RPC](https://solana.com/docs/core) |
+| **Mobile Wallet Adapter (MWA)** | Phantom connection & transaction signing (Solana Mobile standard) | none | [MWA docs](https://docs.solanamobile.com/mobile-wallet-adapter/what-is-mwa) |
+| **Google ML Kit Text Recognition** | On-device OCR — screenshots/camera are never uploaded | none (on-device) | [ML Kit](https://developers.google.com/ml-kit/vision/text-recognition) |
+| **Supabase (optional, feed feature)** | Community feed posts + image storage via PostgREST | `SUPABASE_URL`/`SUPABASE_ANON_KEY` in `local.properties` | [Supabase REST](https://supabase.com/docs/guides/api) |
+
+**Network privacy:** only game lookups (RAWG), your signed Proof-of-Play transaction (Solana), and optional feed posts leave the device. OCR runs entirely on-device.
+
+## Proof-of-Play v1 — open spec
+
+A verified completion is a Solana transaction carrying a single Memo v2 instruction. The memo is a UTF-8 JSON string (base58/base64 are used only for the transaction wire format and signature display):
+
+```json
+{ "v": 1, "app": "questlog", "title": "Palworld", "rawgId": 718135, "completedAt": 1760000000, "rating": 4.5 }
+```
+
+- `v` — format version (1) · `app` — issuer ("questlog") · `title` — human-readable (so the explorer shows a readable credential)
+- `rawgId` — [RAWG](https://rawg.io) game id (portable) · `completedAt` — Unix seconds (UTC) · `rating` — 0–5 stars (nullable)
+- Memo program: `MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr` (Memo v2) · encoding: UTF-8 via `encodeToByteArray()`
+- Explorer template: `https://explorer.solana.com/tx/<SIGNATURE>?cluster=devnet`
+- **This block is the spec** — any tracker can parse and verify it. That's the point: your completions outlive our app.
+
+## Why it wins
+
+| Criterion (25% each) | Questlog |
+|---|---|
+| Stickiness & PMF | Daily Clock In + streak tiers + calendar history + one gentle reminder. Collections compound — free forever. |
+| User Experience | Cozy cream/terracotta design, walletless core, zero jargon in UI, haptics + confetti, friendly failure states everywhere. |
+| Innovation | The screenshot/scan → OCR → **on-chain Proof of Play** pipeline — no game tracker does this. Open memo format = protocol thinking. |
+| Presentation | 60-second honest demo: real device, real timings, real devnet transaction with an openable explorer link. |
+
+**Why blockchain?** *"It's a notarized credential, not a referee. The chain proves when you claimed it, that the claim can't be forged or backdated, and that it's portable — it outlives our app."*
+
+## How to build (developers)
+
+```bash
+# JDK 17 + Android SDK 35 required
+cp local.properties.example local.properties   # add RAWG_API_KEY=<your key>
+./gradlew assembleDebug
+# low-RAM boxes: ./gradlew --no-build-cache --max-workers=1 --no-watch-fs assembleDebug
+```
+
+Full developer briefing (architecture, 7 laws, dependency traps, roadmap): **[HANDOVER.md](HANDOVER.md)** · Submission copy + demo script: **[docs/SUBMISSION.md](docs/SUBMISSION.md)** · Solana spec details: **[docs/VERIFIED-SOLANA-FACTS.md](docs/VERIFIED-SOLANA-FACTS.md)**
 
 ## Screenshots
 
-Screenshots from the live build are in the [release notes](https://github.com/hybirdvault-dot/questlog/releases) — Library, game detail with verified badge, Clock In streak, and the share card.
+![Library](screenshots/01-library.png)
+![Scan a game](screenshots/02-scan.png)
+![Verified on Solana](screenshots/03-verified.png)
+![Clock In streak](screenshots/04-clockin.png)
 
 ## Roadmap (deliberately deferred)
 
-Pro tier is a v2 roadmap item.
+Questlog is free forever — no paid tier is planned. Coming next: the Proof-of-Play social feed (every post carries its real transaction), badge wall, home-screen widget, onboarding. Most apps add a blockchain feature; we use the blockchain **as** the backend — auth, audit and integrity are native, so we deleted those systems by design.
+
+## License
+
+Apache 2.0 — see [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Built on the shoulders of Now in Android, Mihon, ML Kit samples, and the Solana Kotlin Compose scaffold (patterns).
